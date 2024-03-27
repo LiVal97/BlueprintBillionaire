@@ -5,8 +5,11 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
 
-    private float moveSpeed = 20f;
-    public Vector2 bounds;
+    private float moveSpeed = 30f;
+    public float topBound;
+    public float bottomBound;
+    public float leftBound;
+    public float rightBound;
     
     // Update is called once per frame
     void Update()
@@ -30,8 +33,8 @@ public class CameraController : MonoBehaviour
             position.x -= moveSpeed * Time.deltaTime;
         }
 
-        position.x = Mathf.Clamp(position.x, -bounds.x, bounds.x);
-        position.z = Mathf.Clamp(position.z, -bounds.y, bounds.y);
+        position.x = Mathf.Clamp(position.x, leftBound, rightBound);
+        position.z = Mathf.Clamp(position.z, bottomBound, topBound);
         
         transform.position = position;
     }
