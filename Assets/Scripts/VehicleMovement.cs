@@ -5,34 +5,47 @@ using UnityEngine;
 
 public class VehicleMovement : MonoBehaviour
 {
-    public GameObject[] wayPoints;
+    public Transform[] wayPoints;
+    
     public GameObject rightWheel;
     public GameObject leftWheel;
+    public GameObject wayPointsParent;
+
     public float rotationSpeed;
-    
-    public int wayPointNo = 0;
+    public float movementSpeed;
+    public int firstWayPoint;
+    private int wayPointNo;
 
     private void Start()
     {
-        
+        wayPoints = wayPointsParent.GetComponentsInChildren<Transform>();
+        wayPointNo = firstWayPoint;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(wayPointNo);
-        transform.position = Vector3.MoveTowards(transform.position, wayPoints[wayPointNo].transform.position, 5 * Time.deltaTime);
-        Quaternion lookRotation = Quaternion.LookRotation(wayPoints[wayPointNo].transform.position - transform.position);
+        //Rotate the vehicle/wheels in the direct of next waypoint
+        Quaternion lookRotation = Quaternion.LookRotation(wayPoints[wayPointNo].position - transform.position);
+        
+        rightWheel.transform.rotation = Quaternion.RotateTowards(rightWheel.transform.rotation, lookRotation,rotationSpeed *Time.deltaTime);
+        leftWheel.transform.rotation = Quaternion.RotateTowards(leftWheel.transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
         
-        if (Mathf.Abs(wayPoints[wayPointNo].transform.position.z - transform.position.z) < 2f && Mathf.Abs(wayPoints[wayPointNo].transform.position.x - transform.position.x) < 2f)
+        //Move vehicle forward
+        transform.position = Vector3.MoveTowards(transform.position, wayPoints[wayPointNo].position, movementSpeed * Time.deltaTime);
+        
+        //set the next waypoint
+        if (Mathf.Abs(wayPoints[wayPointNo].position.z - transform.position.z) <= 1f && Mathf.Abs(wayPoints[wayPointNo].position.x - transform.position.x) <= 1f)
         {
-            if (wayPointNo == wayPoints.Length-1)
-            {
-                wayPointNo = 0;
-                Debug.Log("Move to first position");
-            }
             wayPointNo++;
+        }
+        
+        //when the car reach the last wayPoint it should go to the first one and start movement from the first wayPoint
+        if (wayPointNo == wayPoints.Length)
+        {
+            wayPointNo = 1;
+            Debug.Log("Move to first position");
         }
 
     }
