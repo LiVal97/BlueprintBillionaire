@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - SpawnPos1
+  - SpawnPos2
+  - RoadWayPoints1
+  - RoadWayPoints2
   layers:
   - Default
   - TransparentFX

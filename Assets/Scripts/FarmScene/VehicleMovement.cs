@@ -18,6 +18,16 @@ public class VehicleMovement : MonoBehaviour
 
     private void Start()
     {
+        
+        if (gameObject.name[0] == 'R')
+        {
+            wayPointsParent = GameObject.FindWithTag("RoadWayPoints2");
+        }
+        if (gameObject.name[0] == 'L')
+        {
+            wayPointsParent = GameObject.FindWithTag("RoadWayPoints1");
+        }
+        
         wayPoints = wayPointsParent.GetComponentsInChildren<Transform>();
         wayPointNo = firstWayPoint;
     }
