@@ -1,20 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class AISpawnManager : MonoBehaviour
 {
-    public GameObject[] leftSideSpawnCars;
+    public GameObject[] SpawnCars;
     private int randomLeftCar;
-    public GameObject[] rightSideSpawnCars;
     private int randomRightCar;
 
     public GameObject leftSpawnPosition;
     public GameObject rightSpawnPosition;
 
-    private float randomWaitingTime = 20f;
-    
+    private float randomWaitingTime = 30f;
+
+    private void Awake()
+    {
+        SpawnCars = Resources.LoadAll<GameObject>("Farm/Vehicles");
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,16 +37,25 @@ public class AISpawnManager : MonoBehaviour
 
     private IEnumerator LeftSpawnCars()
     {
-        randomLeftCar = Random.Range(0, leftSideSpawnCars.Length);
-        Instantiate(leftSideSpawnCars[randomLeftCar],leftSpawnPosition.transform.position, leftSideSpawnCars[randomLeftCar].transform.rotation);
-        yield return new WaitForSeconds(Random.Range(0, randomWaitingTime));
+        while (true)
+        {
+            randomLeftCar = Random.Range(0, SpawnCars.Length);
+            Instantiate(SpawnCars[randomLeftCar],leftSpawnPosition.transform.position, leftSpawnPosition.transform.rotation, leftSpawnPosition.transform);
+            yield return new WaitForSeconds(Random.Range(10, randomWaitingTime));
+        }
+        
+        
     }
     
     private IEnumerator RightSpawnCars()
     {
-        randomRightCar = Random.Range(0, rightSideSpawnCars.Length);
-        Instantiate(rightSideSpawnCars[randomRightCar], rightSpawnPosition.transform.position, rightSideSpawnCars[randomRightCar].transform.rotation);
-        yield return new WaitForSeconds(Random.Range(0, randomWaitingTime));
+        while (true)
+        {
+            randomRightCar = Random.Range(0, SpawnCars.Length);
+            Instantiate(SpawnCars[randomRightCar], rightSpawnPosition.transform.position, rightSpawnPosition.transform.rotation, rightSpawnPosition.transform);
+            yield return new WaitForSeconds(Random.Range(15, randomWaitingTime));
+        }
+        
     }
     
 }

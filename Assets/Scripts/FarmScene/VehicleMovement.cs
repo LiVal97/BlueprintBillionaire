@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class VehicleMovement : MonoBehaviour
 {
@@ -16,14 +17,21 @@ public class VehicleMovement : MonoBehaviour
     public int firstWayPoint;
     private int wayPointNo;
 
+    public bool isCaringSomething;
+
+    public Material[] carColor;
+    public Renderer renderer;
+
     private void Start()
     {
+        Material selectedMaterial = carColor[UnityEngine.Random.Range(0, carColor.Length)];
+        renderer.material = selectedMaterial;
         
-        if (gameObject.name[0] == 'R')
+        if (transform.parent.name == "rightSpawnPos")
         {
             wayPointsParent = GameObject.FindWithTag("RoadWayPoints2");
         }
-        if (gameObject.name[0] == 'L')
+        if (transform.parent.name == "leftSpawnPos")
         {
             wayPointsParent = GameObject.FindWithTag("RoadWayPoints1");
         }
@@ -41,7 +49,6 @@ public class VehicleMovement : MonoBehaviour
         rightWheel.transform.rotation = Quaternion.RotateTowards(rightWheel.transform.rotation, lookRotation,rotationSpeed *Time.deltaTime);
         leftWheel.transform.rotation = Quaternion.RotateTowards(leftWheel.transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
-        
         //Move vehicle forward
         transform.position = Vector3.MoveTowards(transform.position, wayPoints[wayPointNo].position, movementSpeed * Time.deltaTime);
         
@@ -54,8 +61,7 @@ public class VehicleMovement : MonoBehaviour
         //when the car reach the last wayPoint it should go to the first one and start movement from the first wayPoint
         if (wayPointNo == wayPoints.Length)
         {
-            wayPointNo = 1;
-            Debug.Log("Move to first position");
+            Destroy(gameObject);
         }
 
     }
