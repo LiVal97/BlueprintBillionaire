@@ -20,6 +20,7 @@ public class BuildingUnderConstruction : MonoBehaviour
     {
         underConstruction = true;
         remainingTime = buildingDetails.duration;
+        
     }
 
     // Update is called once per frame
@@ -42,9 +43,14 @@ public class BuildingUnderConstruction : MonoBehaviour
         {
             if (buildingDetails.duration - remainingTime >= buildingDetails.duration / (stage.Count +1) * (i+1))
             {
-                for (int j = 0; j < stage[i].buildingPart.Length; j++)
+                for (int j = 0; j < stage[i].buildingPartToAppear.Length; j++)
                 {
-                    stage[i].buildingPart[j].SetActive(true);
+                    stage[i].buildingPartToAppear[j].SetActive(true);
+                }
+                
+                for (int j = 0; j < stage[i].buildingPartToDisappear.Length; j++)
+                {
+                    stage[i].buildingPartToDisappear[j].SetActive(false);
                 }
             }
         }
@@ -65,5 +71,6 @@ public struct BuildingDetails
 
 public struct ConstructionStages
 {
-    public GameObject[] buildingPart;
+    public GameObject[] buildingPartToAppear;
+    public GameObject[] buildingPartToDisappear;
 }
