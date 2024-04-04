@@ -18,7 +18,6 @@ public class BuildingUnderConstruction : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        underConstruction = true;
         remainingTime = buildingDetails.duration;
         
     }
@@ -56,6 +55,11 @@ public class BuildingUnderConstruction : MonoBehaviour
         }
         
     }
+
+    private void OnMouseDown()
+    {
+        Debug.Log(buildingDetails.buildingName);
+    }
 }
 
 [Serializable]
@@ -64,7 +68,13 @@ public struct BuildingDetails
     public string buildingName;
     public float duration;
     public int startingCapital;
-    public int incomeDuringConstruction;
+    public float incomeDuringConstruction;
+    public float incomeMultiplier;
+    public int upgradeIncomePrice;
+    public float upgradePriceMultiplier;
+    public float completionBonus;
+    private float maximumIncome;
+    public int upgradeLVL;
 }
 
 [Serializable]
