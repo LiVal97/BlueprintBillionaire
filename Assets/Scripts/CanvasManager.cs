@@ -10,27 +10,39 @@ using UnityEngine.UI;
 
 public class CanvasManager : MonoBehaviour
 {
+    
+    private BuildingUnderConstruction buildingUnderConstructionClicked;
     [Header("   Building Under Construction Details PopUp")]
-    public BuildingUnderConstruction buildingUnderConstructionClicked;
-    public GameObject notStartedBuildingPopUp;
-    public GameObject startConstructionButton;
-    public GameObject upgradeButton;
-    public GameObject EstimatedRevenueAfterUpgradePannel;
-    public GameObject currentEstimatedRevenuePannel;
-    public GameObject completionBonusPannel;
-    public TMP_Text buildingName;
-    public TMP_Text startingCapitalText;
-    public TMP_Text upgradePriceText;
-    public TMP_Text buildingDurationTime;
-    public TMP_Text revenueDuringCompletion;
-    public TMP_Text completionBonus;
-    public TMP_Text currentEstimatedRevenue;
-    public TMP_Text estimatedRevenueAfterUpgrade;
-    public TMP_Text buildingLvl;
+    public GameObject bucNotStartedBuildingPopUp;
+    public GameObject bucStartConstructionButton;
+    public GameObject bucUpgradeButton;
+    public GameObject bucEstimatedRevenueAfterUpgradePannel;
+    public GameObject bucCurrentEstimatedRevenuePannel;
+    public GameObject bucCompletionBonusPannel;
+    public TMP_Text bucBuildingNameText;
+    public TMP_Text bucStartingCapitalText;
+    public TMP_Text bucUpgradePriceText;
+    public TMP_Text bucBuildingDurationTime;
+    public TMP_Text bucRevenueDuringCompletion;
+    public TMP_Text bucCompletionBonus;
+    public TMP_Text bucCurrentEstimatedRevenue;
+    public TMP_Text bucEstimatedRevenueAfterUpgrade;
+    public TMP_Text bucBuildingLvl;
 
     [Header("   Completed Building Details PopUp")]
     public CompletedBuilding completedBuildingClicked;
     public GameObject completedBuildingPopUp;
+    public TMP_Text cbNameText;
+    public TMP_Text cbRevenuePerSecondAmountText;
+    public TMP_Text cbLvlText;
+    public TMP_Text cbUpgradePriceText;
+
+    [Header("   Workers")] 
+    public GameObject addWorkers;
+    public GameObject addWorkerButton;
+    public GameObject exitWorkerShopButton;
+    public TMP_Text hireAmountToPayText;
+
 
     private GameManager gameManager;
 
@@ -41,57 +53,60 @@ public class CanvasManager : MonoBehaviour
 
     private void Update()
     {
-        BUCUpdatedStats();
+        UpdateHireAmountToPay();
+        BucUpdatedStats();
         BuildingClick();
         CheckBuildingStatus();
     }
 
     private void BuildingUnderConstructionPopUp()
     {
-        notStartedBuildingPopUp.SetActive(true);
+        bucNotStartedBuildingPopUp.SetActive(true);
         if (buildingUnderConstructionClicked.underConstruction)
         {
-            startConstructionButton.SetActive(false);
-            upgradeButton.SetActive(true);
-            EstimatedRevenueAfterUpgradePannel.SetActive(true);
-            currentEstimatedRevenuePannel.SetActive(true);
-            completionBonusPannel.SetActive(false);
+            bucStartConstructionButton.SetActive(false);
+            bucUpgradeButton.SetActive(true);
+            bucEstimatedRevenueAfterUpgradePannel.SetActive(true);
+            bucCurrentEstimatedRevenuePannel.SetActive(true);
+            bucCompletionBonusPannel.SetActive(false);
         }
         if (!buildingUnderConstructionClicked.underConstruction)
         {
-            startConstructionButton.SetActive(true);
-            upgradeButton.SetActive(false);
-            EstimatedRevenueAfterUpgradePannel.SetActive(false);
-            currentEstimatedRevenuePannel.SetActive(false);
-            completionBonusPannel.SetActive(true);
+            bucStartConstructionButton.SetActive(true);
+            bucUpgradeButton.SetActive(false);
+            bucEstimatedRevenueAfterUpgradePannel.SetActive(false);
+            bucCurrentEstimatedRevenuePannel.SetActive(false);
+            bucCompletionBonusPannel.SetActive(true);
         }
         
-        buildingName.text = buildingUnderConstructionClicked.buildingDetails.buildingName;
-        startingCapitalText.text = buildingUnderConstructionClicked.buildingDetails.startingCapital.ToString("#,###");
-        upgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
-        completionBonus.text = buildingUnderConstructionClicked.buildingDetails.completionBonus.ToString("#,###");
+        bucBuildingNameText.text = buildingUnderConstructionClicked.buildingDetails.buildingName;
+        bucStartingCapitalText.text = buildingUnderConstructionClicked.buildingDetails.startingCapital.ToString("#,###");
+        bucRevenueDuringCompletion.text =
+            buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
+        bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
+        bucCompletionBonus.text = buildingUnderConstructionClicked.buildingDetails.completionBonus.ToString("#,###");
     }
 
-    private void BUCUpdatedStats()
+    private void BucUpdatedStats()
     {
         if (buildingUnderConstructionClicked)
         {
-            buildingDurationTime.text = buildingUnderConstructionClicked.remainingTime.ToString("#,###");
-            revenueDuringCompletion.text =
-                buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
-            currentEstimatedRevenue.text = buildingUnderConstructionClicked.moneyToReceive.ToString("#,###");
-            estimatedRevenueAfterUpgrade.text =
+            bucBuildingDurationTime.text = buildingUnderConstructionClicked.remainingTime.ToString("#,###");
+            bucCurrentEstimatedRevenue.text = buildingUnderConstructionClicked.moneyToReceive.ToString("#,###");
+            bucEstimatedRevenueAfterUpgrade.text =
                 buildingUnderConstructionClicked.moneyToReceiveAfterUpgrade.ToString("#,###");
-            buildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
+            bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
         }
     }
+    
+    
 
     private void CheckBuildingStatus()
     {
         if (buildingUnderConstructionClicked != null && !buildingUnderConstructionClicked.gameObject.activeInHierarchy)
         {
             Debug.Log("Constructions Finished");
-            notStartedBuildingPopUp.SetActive(false);
+            bucNotStartedBuildingPopUp.SetActive(false);
         }
     }
 
@@ -111,12 +126,14 @@ public class CanvasManager : MonoBehaviour
                     buildingUnderConstructionClicked = rayHit.transform.gameObject.GetComponent<BuildingUnderConstruction>();
                     BuildingUnderConstructionPopUp();
                     Debug.Log("Construction " + buildingUnderConstructionClicked.name+" start = " + buildingUnderConstructionClicked.underConstruction);
+                    CloseCbPopUp();
                 }
                 if (rayHit.transform.gameObject.GetComponent<CompletedBuilding>() != null)
                 {
                     completedBuildingClicked = rayHit.transform.gameObject.GetComponent<CompletedBuilding>();
                     CompletedBuildingPopUp();
                     Debug.Log("CompletedBuildingClicked");
+                    CloseBuildingUCPopUp();
                 }
             }
         } 
@@ -124,26 +141,90 @@ public class CanvasManager : MonoBehaviour
     
     private void CompletedBuildingPopUp()
     {
-        
+        completedBuildingPopUp.SetActive(true);
+        cbNameText.text = completedBuildingClicked.completeBuildingDetails.buildingName;
+        cbRevenuePerSecondAmountText.text =
+            completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,###.##");
+        cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,###");
     }
 
     public void CloseBuildingUCPopUp()
     {
-        notStartedBuildingPopUp.SetActive(false);
+        bucNotStartedBuildingPopUp.SetActive(false);
         buildingUnderConstructionClicked = null;
+    }
+
+    public void CloseCbPopUp()
+    {
+        completedBuildingPopUp.SetActive(false);
+        completedBuildingClicked = null;
     }
 
     public void UpgradeInProgressBuilding()
     {
-        buildingUnderConstructionClicked.BuildingUpgrade();
-        upgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
-        gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction - buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction/buildingUnderConstructionClicked.buildingDetails.incomeMultiplier;
+        if (buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice <= gameManager.money)
+        {
+            gameManager.RemoveMoney(buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice);
+            buildingUnderConstructionClicked.BuildingUpgrade();
+            bucRevenueDuringCompletion.text =
+                buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
+            bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
+            gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction - buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction/buildingUnderConstructionClicked.buildingDetails.incomeMultiplier;
+        }
+    }
+
+    public void UpgradeCompletedBuilding()
+    {
+        if (completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice <= gameManager.money)
+        {
+            gameManager.RemoveMoney(completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice);
+            completedBuildingClicked.UpgradeCompleteBuilding();
+            cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,###");
+            cbRevenuePerSecondAmountText.text =
+                completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,###.##");
+            gameManager.incomePerSecond += completedBuildingClicked.completeBuildingDetails.incomeOverTime -
+                                           completedBuildingClicked.completeBuildingDetails.incomeOverTime / completedBuildingClicked
+                                               .completeBuildingDetails.incomeMultiplier;
+        }
+        
     }
 
     public void StartConstruction()
     {
-        buildingUnderConstructionClicked.underConstruction = true;
-        BuildingUnderConstructionPopUp();
-        gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction;
+        if (buildingUnderConstructionClicked.buildingDetails.startingCapital <= gameManager.money)
+        {
+            gameManager.RemoveMoney(buildingUnderConstructionClicked.buildingDetails.startingCapital);
+            buildingUnderConstructionClicked.underConstruction = true;
+            BuildingUnderConstructionPopUp();
+            gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction;
+        }
+    }
+
+    public void AddWorkers()
+    {
+        addWorkers.SetActive(true);
+        addWorkerButton.SetActive(false);
+        exitWorkerShopButton.SetActive(true);
+    }
+
+    public void GiveUpAddWorkers()
+    {
+        addWorkers.SetActive(false);
+        addWorkerButton.SetActive(true);
+        exitWorkerShopButton.SetActive(false);
+    }
+
+    public void HireWorkers()
+    {
+        gameManager.HireWorker();
+        
+    }
+
+    public void UpdateHireAmountToPay()
+    {
+        if (addWorkers.gameObject.activeInHierarchy)
+        {
+            hireAmountToPayText.text = gameManager.hirePrice.ToString("#,###");
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,24 +7,34 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private float money = 0f;
+    [Header("   MoneyManager")]
+    [HideInInspector] public float money;
     [HideInInspector] public float incomePerSecond = 0f;
     private float timer;
     private float second = 1.0f;
     public TMP_Text moneyText;
     public TMP_Text incomePerSecondText;
-
+    
+    
+    [Header("Workers")]
+    public int workersNo;
+    public TMP_Text workerNoText;
+    private float remuneration;
+    [HideInInspector] public float hirePrice;
     
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        money = 10000f;
+        workersNo = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
+        hirePrice = 100 * MathF.Pow(2, (workersNo - 1));
+        workerNoText.text = workersNo.ToString("#,###");
         if (money == 0)
         {
             moneyText.text = "0";
@@ -44,14 +55,7 @@ public class GameManager : MonoBehaviour
             incomePerSecondText.text = incomePerSecond.ToString("#,###.##") + "/Sec";    
         }
         
-        timer += Time.deltaTime;
-        if (timer >= second)
-        {
-            timer = 0f;
-            money += incomePerSecond;
-        }
-        
-       
+        AddMoneyOverTime(incomePerSecond);
     }
 
     public void AddMoneyOverTime(float amount)
@@ -68,4 +72,16 @@ public class GameManager : MonoBehaviour
     {
         money += amount;
     }
+
+    public void RemoveMoney(float amount)
+    {
+        money -= amount;
+    }
+
+    public void HireWorker()
+    {
+        RemoveMoney(hirePrice);
+        
+    }
+    
 }

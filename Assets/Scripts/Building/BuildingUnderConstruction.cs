@@ -11,14 +11,17 @@ public class BuildingUnderConstruction : MonoBehaviour
 {
     [Header("   Construction Site Details")]
     public BuildingDetails buildingDetails;
-    public float remainingTime;
+    [HideInInspector] public float remainingTime;
     public bool underConstruction;
-    public float moneyToReceive;
-    public float moneyToReceiveAfterUpgrade;
-    
+    [HideInInspector] public float moneyToReceive;
+    [HideInInspector] public float moneyToReceiveAfterUpgrade;
+    private float _moneyMade;
+    private float _timer;
+
 
     [Header("   Completed Construction Details")]
     public GameObject completedBuilding;
+    private CompletedBuilding cBuilding;
     public GameObject appendices;
     
     
@@ -36,6 +39,8 @@ public class BuildingUnderConstruction : MonoBehaviour
         remainingTime = buildingDetails.duration;
         gameManager = FindObjectOfType<GameManager>();
         buildingDetails.upgradeLVL = 1;
+        cBuilding = completedBuilding.GetComponent<CompletedBuilding>();
+
     }
 
     // Update is called once per frame
@@ -54,6 +59,7 @@ public class BuildingUnderConstruction : MonoBehaviour
         {
             gameManager.AddMoneyInstant(buildingDetails.completionBonus);
             gameManager.incomePerSecond -= buildingDetails.incomeDuringConstruction;
+            gameManager.incomePerSecond += cBuilding.completeBuildingDetails.incomeOverTime;
             underConstruction = false;
             remainingTime = 0f;
             completedBuilding.SetActive(true);
@@ -90,8 +96,14 @@ public class BuildingUnderConstruction : MonoBehaviour
     //Show the player the remaining amount of money to receive at current building LVL and at next
     private void EstimateRevenueToReceive()
     {
-        moneyToReceive = (int) remainingTime * buildingDetails.incomeDuringConstruction;
-        moneyToReceiveAfterUpgrade = (int) remainingTime * buildingDetails.incomeDuringConstruction *
+        _timer += Time.deltaTime;
+        if (_timer >= 1f)
+        {
+            _timer = 0f;
+            _moneyMade += buildingDetails.incomeDuringConstruction;
+        }
+        moneyToReceive = (int) _moneyMade + remainingTime * buildingDetails.incomeDuringConstruction;
+        moneyToReceiveAfterUpgrade = (int)_moneyMade + remainingTime * buildingDetails.incomeDuringConstruction *
                                      buildingDetails.incomeMultiplier - buildingDetails.upgradeIncomePrice;
     }
 }
