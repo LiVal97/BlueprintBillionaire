@@ -12,13 +12,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public float incomePerSecond = 0f;
     private float timer;
     private float second = 1.0f;
-    public TMP_Text moneyText;
-    public TMP_Text incomePerSecondText;
-    
     
     [Header("Workers")]
     public int workersNo;
-    public TMP_Text workerNoText;
     private float remuneration;
     [HideInInspector] public float hirePrice;
     
@@ -26,7 +22,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        money = 10000f;
+        money = 2000f;
         workersNo = 1;
     }
 
@@ -34,27 +30,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         hirePrice = 100 * MathF.Pow(2, (workersNo - 1));
-        workerNoText.text = workersNo.ToString("#,###");
-        if (money == 0)
-        {
-            moneyText.text = "0";
-        }
-
-        if (money > 0 )
-        {
-            moneyText.text = money.ToString("#,###");
-        }
-
-        if (incomePerSecond == 0)
-        {
-            incomePerSecondText.text = "0/Sec";
-        }
-
-        if (incomePerSecond > 0)
-        {
-            incomePerSecondText.text = incomePerSecond.ToString("#,###.##") + "/Sec";    
-        }
-        
         AddMoneyOverTime(incomePerSecond);
     }
 
@@ -81,7 +56,8 @@ public class GameManager : MonoBehaviour
     public void HireWorker()
     {
         RemoveMoney(hirePrice);
-        
+        workersNo++;
+
     }
     
 }

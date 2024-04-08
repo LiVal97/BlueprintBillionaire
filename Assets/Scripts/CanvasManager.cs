@@ -42,6 +42,11 @@ public class CanvasManager : MonoBehaviour
     public GameObject addWorkerButton;
     public GameObject exitWorkerShopButton;
     public TMP_Text hireAmountToPayText;
+    public TMP_Text workerNoText;
+    
+    [Header("   Money")]
+    public TMP_Text moneyText;
+    public TMP_Text incomePerSecondText;
 
 
     private GameManager gameManager;
@@ -57,6 +62,8 @@ public class CanvasManager : MonoBehaviour
         BucUpdatedStats();
         BuildingClick();
         CheckBuildingStatus();
+        PresentMoney();
+        PresentWorkersNo();
     }
 
     private void BuildingUnderConstructionPopUp()
@@ -226,5 +233,33 @@ public class CanvasManager : MonoBehaviour
         {
             hireAmountToPayText.text = gameManager.hirePrice.ToString("#,###");
         }
+    }
+
+    private void PresentMoney()
+    {
+        if (gameManager.money == 0)
+                {
+                    moneyText.text = "0";
+                }
+        
+                if (gameManager.money > 0 )
+                {
+                    moneyText.text = gameManager.money.ToString("#,###");
+                }
+        
+                if (gameManager.incomePerSecond == 0)
+                {
+                    incomePerSecondText.text = "0/Sec";
+                }
+        
+                if (gameManager.incomePerSecond > 0)
+                {
+                    incomePerSecondText.text = gameManager.incomePerSecond.ToString("#,###.##") + "/Sec";    
+                }
+    }
+
+    private void PresentWorkersNo()
+    {
+        workerNoText.text = gameManager.workersNo.ToString("#,###");
     }
 }
