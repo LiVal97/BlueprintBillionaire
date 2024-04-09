@@ -48,12 +48,20 @@ public class CanvasManager : MonoBehaviour
     public TMP_Text moneyText;
     public TMP_Text incomePerSecondText;
 
+    [Header("   Settings")] 
+    public GameObject settingsPanel;
+    public Slider musicSlider;
+    public Slider soundSlider;
+    private bool _settingsIsOpen;
+    
 
     private GameManager gameManager;
+    private AudioManager _audioManager;
 
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
+        _audioManager = FindObjectOfType<AudioManager>();
     }
 
     private void Update()
@@ -177,6 +185,8 @@ public class CanvasManager : MonoBehaviour
                 buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
             bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
             gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction - buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction/buildingUnderConstructionClicked.buildingDetails.incomeMultiplier;
+            //Update building info in the save file
+            buildingUnderConstructionClicked.UpdateBipDetails();
         }
     }
 
@@ -192,6 +202,8 @@ public class CanvasManager : MonoBehaviour
             gameManager.incomePerSecond += completedBuildingClicked.completeBuildingDetails.incomeOverTime -
                                            completedBuildingClicked.completeBuildingDetails.incomeOverTime / completedBuildingClicked
                                                .completeBuildingDetails.incomeMultiplier;
+            //Update building info in the save file
+            completedBuildingClicked.UpdateCbDetails();
         }
         
     }
@@ -204,11 +216,15 @@ public class CanvasManager : MonoBehaviour
             buildingUnderConstructionClicked.underConstruction = true;
             BuildingUnderConstructionPopUp();
             gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction;
+            //Save building info in the save file
+            buildingUnderConstructionClicked.SaveBip();
         }
+        
     }
 
     public void AddWorkers()
     {
+        _audioManager.ClickSound();
         addWorkers.SetActive(true);
         addWorkerButton.SetActive(false);
         exitWorkerShopButton.SetActive(true);
@@ -216,6 +232,7 @@ public class CanvasManager : MonoBehaviour
 
     public void GiveUpAddWorkers()
     {
+        _audioManager.ClickSound();
         addWorkers.SetActive(false);
         addWorkerButton.SetActive(true);
         exitWorkerShopButton.SetActive(false);
@@ -223,6 +240,7 @@ public class CanvasManager : MonoBehaviour
 
     public void HireWorkers()
     {
+        _audioManager.ClickSound();
         gameManager.HireWorker();
         
     }
@@ -238,28 +256,44 @@ public class CanvasManager : MonoBehaviour
     private void PresentMoney()
     {
         if (gameManager.money == 0)
-                {
-                    moneyText.text = "0";
-                }
+        {
+            moneyText.text = "0";
+        }
         
-                if (gameManager.money > 0 )
-                {
-                    moneyText.text = gameManager.money.ToString("#,###");
-                }
+        if (gameManager.money > 0 )
+        {
+            moneyText.text = gameManager.money.ToString("#,###");
+        }
         
-                if (gameManager.incomePerSecond == 0)
-                {
-                    incomePerSecondText.text = "0/Sec";
-                }
+        if (gameManager.incomePerSecond == 0)
+        {
+            incomePerSecondText.text = "0/Sec";
+        }
         
-                if (gameManager.incomePerSecond > 0)
-                {
-                    incomePerSecondText.text = gameManager.incomePerSecond.ToString("#,###.##") + "/Sec";    
-                }
+        if (gameManager.incomePerSecond > 0)
+        {
+            incomePerSecondText.text = gameManager.incomePerSecond.ToString("#,###.##") + "/Sec";    
+        }
     }
 
     private void PresentWorkersNo()
     {
         workerNoText.text = gameManager.workersNo.ToString("#,###");
+    }
+
+    public void OpenSettings()
+    {
+        _audioManager.ClickSound();
+        if (!_settingsIsOpen)
+        {
+            settingsPanel.SetActive(!_settingsIsOpen);
+            _settingsIsOpen = !_settingsIsOpen;
+        }
+        else
+        {
+            settingsPanel.SetActive(!_settingsIsOpen);
+            _settingsIsOpen = !_settingsIsOpen;
+        }
+        
     }
 }

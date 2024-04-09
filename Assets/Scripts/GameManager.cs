@@ -17,13 +17,14 @@ public class GameManager : MonoBehaviour
     public int workersNo;
     private float remuneration;
     [HideInInspector] public float hirePrice;
-    
-    
+
+    private GlobalManager _globalManager;
     // Start is called before the first frame update
     void Start()
     {
         money = 2000f;
         workersNo = 1;
+        _globalManager = FindObjectOfType<GlobalManager>();
     }
 
     // Update is called once per frame
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour
     {
         RemoveMoney(hirePrice);
         workersNo++;
-
+        _globalManager.playersData.workers = workersNo;
     }
     
 }

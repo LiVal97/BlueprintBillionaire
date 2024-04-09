@@ -7,11 +7,18 @@ public class CompletedBuilding : MonoBehaviour
 {
     public CompleteBuildingDetails completeBuildingDetails;
 
-    private GameManager gameManager;
+    private GameManager _gameManager;
+    private GlobalManager _globalManager;
+
+    public bool buildingCompleted;
+    
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        buildingCompleted = true;
+        _gameManager = FindObjectOfType<GameManager>();
+        _globalManager = FindObjectOfType<GlobalManager>();
+        SaveCb();
     }
 
     // Update is called once per frame
@@ -26,6 +33,27 @@ public class CompletedBuilding : MonoBehaviour
         completeBuildingDetails.upgradeIncomePrice = (int) (completeBuildingDetails.upgradeIncomePrice *
                                                      completeBuildingDetails.upgradePriceMultiplier);
         completeBuildingDetails.upgradeLVL++;
+    }
+
+    public void SaveCb()
+    {
+        _globalManager.playersData.completedBuildingsStatsList.Add(new CompletedBuildingsStats(completeBuildingDetails.buildingName, gameObject.activeInHierarchy, completeBuildingDetails.incomeOverTime, completeBuildingDetails.upgradeIncomePrice, completeBuildingDetails.upgradeLVL));
+    }
+
+    public void UpdateCbDetails()
+    {
+        for (int i = 0; i < _globalManager.playersData.completedBuildingsStatsList.Count; i++)
+        {
+            if (_globalManager.playersData.completedBuildingsStatsList[i].cbName == completeBuildingDetails.buildingName)
+            {
+                _globalManager.playersData.completedBuildingsStatsList[i].cbStatus = gameObject.activeInHierarchy;
+                _globalManager.playersData.completedBuildingsStatsList[i].cbIncomeOverTime =
+                    completeBuildingDetails.incomeOverTime;
+                _globalManager.playersData.completedBuildingsStatsList[i].cbUpgradeIncomePrice =
+                    completeBuildingDetails.upgradeIncomePrice;
+                _globalManager.playersData.completedBuildingsStatsList[i].cbLvl = completeBuildingDetails.upgradeLVL;
+            }
+        }
     }
 }
 
