@@ -162,7 +162,7 @@ public class BuildingUnderConstruction : MonoBehaviour
         while (true)
         {
             UpdateBipDetails();
-            yield return new WaitForSeconds(120);
+            yield return new WaitForSeconds(2);
         }
     }
 

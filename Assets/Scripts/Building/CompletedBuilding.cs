@@ -27,7 +27,7 @@ public class CompletedBuilding : MonoBehaviour
             SaveCb();
         }
         
-        StartCoroutine(SaveCbUpdatesRecurrent());
+        //StartCoroutine(SaveCbUpdatesRecurrent());
     }
 
     public void UpgradeCompleteBuilding()
@@ -77,14 +77,14 @@ public class CompletedBuilding : MonoBehaviour
         }
     }
 
-    private IEnumerator SaveCbUpdatesRecurrent()
+    /*private IEnumerator SaveCbUpdatesRecurrent()
     {
         while (true)
         {
             UpdateCbData();
             yield return new WaitForSeconds(120);
         }
-    }
+    }*/
 }
 
 [Serializable]

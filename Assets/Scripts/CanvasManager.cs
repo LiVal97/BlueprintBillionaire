@@ -198,14 +198,18 @@ public class CanvasManager : MonoBehaviour
         if (completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice <= gameManager.money)
         {
             gameManager.RemoveMoney(completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice);
+            
             completedBuildingClicked.UpgradeCompleteBuilding();
+            
             cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,###");
             cbRevenuePerSecondAmountText.text =
                 completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,###.##");
+            cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,###");
+            
             gameManager.incomePerSecond += completedBuildingClicked.completeBuildingDetails.incomeOverTime -
                                            completedBuildingClicked.completeBuildingDetails.incomeOverTime / completedBuildingClicked
                                                .completeBuildingDetails.incomeMultiplier;
-            cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,###");
+            
             //Update building info in the save file
             completedBuildingClicked.UpdateCbData();
             SaveData.SaveCurrentData(_globalManager.playersData);
