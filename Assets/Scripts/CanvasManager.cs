@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class CanvasManager : MonoBehaviour
 {
-    
     private BuildingUnderConstruction buildingUnderConstructionClicked;
     [Header("   Building Under Construction Details PopUp")]
     public GameObject bucNotStartedBuildingPopUp;
@@ -57,11 +56,13 @@ public class CanvasManager : MonoBehaviour
 
     private GameManager gameManager;
     private AudioManager _audioManager;
+    private GlobalManager _globalManager;
 
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         _audioManager = FindObjectOfType<AudioManager>();
+        _globalManager = FindObjectOfType<GlobalManager>();
     }
 
     private void Update()
@@ -69,7 +70,7 @@ public class CanvasManager : MonoBehaviour
         UpdateHireAmountToPay();
         BucUpdatedStats();
         BuildingClick();
-        CheckBuildingStatus();
+        CheckBipStatus();
         PresentMoney();
         PresentWorkersNo();
     }
@@ -100,6 +101,7 @@ public class CanvasManager : MonoBehaviour
             buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
         bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
         bucCompletionBonus.text = buildingUnderConstructionClicked.buildingDetails.completionBonus.ToString("#,###");
+        bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
     }
 
     private void BucUpdatedStats()
@@ -110,13 +112,11 @@ public class CanvasManager : MonoBehaviour
             bucCurrentEstimatedRevenue.text = buildingUnderConstructionClicked.moneyToReceive.ToString("#,###");
             bucEstimatedRevenueAfterUpgrade.text =
                 buildingUnderConstructionClicked.moneyToReceiveAfterUpgrade.ToString("#,###");
-            bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
+            //bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
         }
     }
     
-    
-
-    private void CheckBuildingStatus()
+    private void CheckBipStatus()
     {
         if (buildingUnderConstructionClicked != null && !buildingUnderConstructionClicked.gameObject.activeInHierarchy)
         {
@@ -161,6 +161,7 @@ public class CanvasManager : MonoBehaviour
         cbRevenuePerSecondAmountText.text =
             completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,###.##");
         cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,###");
+        cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,###");
     }
 
     public void CloseBuildingUCPopUp()
@@ -185,8 +186,10 @@ public class CanvasManager : MonoBehaviour
                 buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
             bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
             gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction - buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction/buildingUnderConstructionClicked.buildingDetails.incomeMultiplier;
+            bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
             //Update building info in the save file
             buildingUnderConstructionClicked.UpdateBipDetails();
+            SaveData.SaveCurrentData(_globalManager.playersData);
         }
     }
 
@@ -202,8 +205,10 @@ public class CanvasManager : MonoBehaviour
             gameManager.incomePerSecond += completedBuildingClicked.completeBuildingDetails.incomeOverTime -
                                            completedBuildingClicked.completeBuildingDetails.incomeOverTime / completedBuildingClicked
                                                .completeBuildingDetails.incomeMultiplier;
+            cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,###");
             //Update building info in the save file
-            completedBuildingClicked.UpdateCbDetails();
+            completedBuildingClicked.UpdateCbData();
+            SaveData.SaveCurrentData(_globalManager.playersData);
         }
         
     }
@@ -218,6 +223,7 @@ public class CanvasManager : MonoBehaviour
             gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction;
             //Save building info in the save file
             buildingUnderConstructionClicked.SaveBip();
+            SaveData.SaveCurrentData(_globalManager.playersData);
         }
         
     }
@@ -242,10 +248,10 @@ public class CanvasManager : MonoBehaviour
     {
         _audioManager.ClickSound();
         gameManager.HireWorker();
-        
+        SaveData.SaveCurrentData(_globalManager.playersData);
     }
 
-    public void UpdateHireAmountToPay()
+    private void UpdateHireAmountToPay()
     {
         if (addWorkers.gameObject.activeInHierarchy)
         {

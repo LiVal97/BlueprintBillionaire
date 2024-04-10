@@ -22,9 +22,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        money = 2000f;
-        workersNo = 1;
         _globalManager = FindObjectOfType<GlobalManager>();
+        LoadPlayersData();
+        StartCoroutine(SavePlayersInfoRecurrent());
     }
 
     // Update is called once per frame
@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
             money += amount;
         }
     }
+    
 
     public void AddMoneyInstant(float amount)
     {
@@ -60,5 +61,28 @@ public class GameManager : MonoBehaviour
         workersNo++;
         _globalManager.playersData.workers = workersNo;
     }
-    
+
+    public void SavePlayersInfo()
+    {
+        _globalManager.playersData.money = money;
+        _globalManager.playersData.revenuePerSecond = incomePerSecond;
+        //_globalManager.playersData.hireWorkerPrice = hirePrice;
+        SaveData.SaveCurrentData(_globalManager.playersData);
+    }
+
+    private IEnumerator SavePlayersInfoRecurrent()
+    {
+        while (true)
+        {
+            SavePlayersInfo();
+            yield return new WaitForSeconds(2);
+        }
+    }
+
+    private void LoadPlayersData()
+    {
+        money = _globalManager.playersData.money;
+        incomePerSecond = _globalManager.playersData.revenuePerSecond;
+        workersNo = _globalManager.playersData.workers;
+    }
 }

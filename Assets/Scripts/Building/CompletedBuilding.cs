@@ -11,6 +11,8 @@ public class CompletedBuilding : MonoBehaviour
     private GlobalManager _globalManager;
 
     public bool buildingCompleted;
+
+    private bool _cbSaved;
     
     // Start is called before the first frame update
     void Start()
@@ -18,13 +20,14 @@ public class CompletedBuilding : MonoBehaviour
         buildingCompleted = true;
         _gameManager = FindObjectOfType<GameManager>();
         _globalManager = FindObjectOfType<GlobalManager>();
-        SaveCb();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
         
+        LoadCbData();
+        if (!_cbSaved)
+        {
+            SaveCb();
+        }
+        
+        StartCoroutine(SaveCbUpdatesRecurrent());
     }
 
     public void UpgradeCompleteBuilding()
@@ -35,12 +38,15 @@ public class CompletedBuilding : MonoBehaviour
         completeBuildingDetails.upgradeLVL++;
     }
 
-    public void SaveCb()
+    private void SaveCb()
     {
-        _globalManager.playersData.completedBuildingsStatsList.Add(new CompletedBuildingsStats(completeBuildingDetails.buildingName, gameObject.activeInHierarchy, completeBuildingDetails.incomeOverTime, completeBuildingDetails.upgradeIncomePrice, completeBuildingDetails.upgradeLVL));
+        _cbSaved = true;
+        _globalManager.playersData.completedBuildingsStatsList.Add(new CompletedBuildingsStats(completeBuildingDetails.buildingName, gameObject.activeInHierarchy,_cbSaved, completeBuildingDetails.incomeOverTime, completeBuildingDetails.upgradeIncomePrice, completeBuildingDetails.upgradeLVL));
+        _gameManager.incomePerSecond += completeBuildingDetails.incomeOverTime;
+        SaveData.SaveCurrentData(_globalManager.playersData);
     }
 
-    public void UpdateCbDetails()
+    public void UpdateCbData()
     {
         for (int i = 0; i < _globalManager.playersData.completedBuildingsStatsList.Count; i++)
         {
@@ -55,6 +61,30 @@ public class CompletedBuilding : MonoBehaviour
             }
         }
     }
+    
+    public void LoadCbData()
+    {
+        for (int i = 0; i < _globalManager.playersData.completedBuildingsStatsList.Count; i++)
+        {
+            if (_globalManager.playersData.completedBuildingsStatsList[i].cbName == completeBuildingDetails.buildingName)
+            {
+                    gameObject.SetActive(_globalManager.playersData.completedBuildingsStatsList[i].cbStatus);
+                    completeBuildingDetails.incomeOverTime = _globalManager.playersData.completedBuildingsStatsList[i].cbIncomeOverTime;
+                    completeBuildingDetails.upgradeIncomePrice = _globalManager.playersData.completedBuildingsStatsList[i].cbUpgradeIncomePrice;
+                    completeBuildingDetails.upgradeLVL = _globalManager.playersData.completedBuildingsStatsList[i].cbLvl;
+                    _cbSaved = _globalManager.playersData.completedBuildingsStatsList[i].cbSaved;
+            }
+        }
+    }
+
+    private IEnumerator SaveCbUpdatesRecurrent()
+    {
+        while (true)
+        {
+            UpdateCbData();
+            yield return new WaitForSeconds(120);
+        }
+    }
 }
 
 [Serializable]
@@ -63,7 +93,7 @@ public struct CompleteBuildingDetails
     public string buildingName;
     public float incomeOverTime;
     public float incomeMultiplier;
-    public int upgradeIncomePrice;
+    public float upgradeIncomePrice;
     public float upgradePriceMultiplier;
     public int upgradeLVL;
 }

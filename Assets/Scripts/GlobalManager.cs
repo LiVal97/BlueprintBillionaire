@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,13 @@ using UnityEngine;
 public class GlobalManager : MonoBehaviour
 {
     public PlayersData playersData;
-    // Start is called before the first frame update
+
+    private void Awake()
+    {
+        //ResetSaveData();
+        playersData = SaveData.LoadData();
+    }
+
     void Start()
     {
         
@@ -17,5 +24,17 @@ public class GlobalManager : MonoBehaviour
         
     }
 
+    private void ResetSaveData()
+    {
+        playersData.musicVolume = 1f;
+        playersData.effectsVolume = 1f;
+        playersData.money = 2000f;
+        playersData.revenuePerSecond = 0f;
+        playersData.workers = 1;
+        //playersData.hireWorkerPrice = 100f;
+        playersData.completedBuildingsStatsList.Clear();
+        playersData.buildingInProgressStatsList.Clear();
+        SaveData.SaveCurrentData(playersData);
+    }
     
 }
