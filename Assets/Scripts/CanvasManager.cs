@@ -306,4 +306,10 @@ public class CanvasManager : MonoBehaviour
         }
         
     }
+
+    public void ExitGame()
+    {
+        SaveData.SaveCurrentData(_globalManager.playersData);
+        Application.Quit();
+    }
 }

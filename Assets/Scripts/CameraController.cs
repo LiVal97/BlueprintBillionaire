@@ -16,19 +16,19 @@ public class CameraController : MonoBehaviour
     {
         Vector3 position = transform.position;
 
-        if (Input.GetKey(KeyCode.W) || Input.mousePosition.y >= Screen.height - 10f)
+        if (Input.GetKey(KeyCode.W) || Input.mousePosition.y >= Screen.height - 20f)
         {
             position.z += moveSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.S) || Input.mousePosition.y <= 10f)
+        if (Input.GetKey(KeyCode.S) || Input.mousePosition.y <= 20f)
         {
             position.z -= moveSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.D) || Input.mousePosition.x >= Screen.width - 10f)
+        if (Input.GetKey(KeyCode.D) || Input.mousePosition.x >= Screen.width - 20f)
         {
             position.x += moveSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.A) || Input.mousePosition.x <= 10f)
+        if (Input.GetKey(KeyCode.A) || Input.mousePosition.x <= 20f)
         {
             position.x -= moveSpeed * Time.deltaTime;
         }

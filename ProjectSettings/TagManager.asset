@@ -8,6 +8,11 @@ TagManager:
   - SpawnPos2
   - RoadWayPoints1
   - RoadWayPoints2
+  - WalkWayP
+  - CarryWayP
+  - IdleWayP
+  - BuildWayP
+  - PlaceOnTheGroundWayP
   layers:
   - Default
   - TransparentFX
@@ -17,10 +22,10 @@ TagManager:
   - UI
   - BuildingUnderConstruction
   - CompletedBuilding
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - Road
+  - Builder
+  - BuilderWayPs
   - 
   - 
   - 
