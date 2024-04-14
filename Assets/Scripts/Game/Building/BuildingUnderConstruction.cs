@@ -99,6 +99,7 @@ public class BuildingUnderConstruction : MonoBehaviour
     //Add on upgrade button in order to upgrade the building
     public void BuildingUpgrade()
     {
+        buildingDetails.moneySpent += buildingDetails.upgradeIncomePrice;
         buildingDetails.incomeDuringConstruction *= buildingDetails.incomeMultiplier;
         buildingDetails.upgradeIncomePrice = (int) (buildingDetails.upgradeIncomePrice * buildingDetails.upgradePriceMultiplier);
         buildingDetails.upgradeLVL++;
@@ -115,12 +116,12 @@ public class BuildingUnderConstruction : MonoBehaviour
         }
         moneyToReceive = (int) _moneyMade + remainingTime * buildingDetails.incomeDuringConstruction;
         moneyToReceiveAfterUpgrade = (int)_moneyMade + remainingTime * buildingDetails.incomeDuringConstruction *
-                                     buildingDetails.incomeMultiplier - buildingDetails.upgradeIncomePrice;
+                                     buildingDetails.incomeMultiplier - buildingDetails.upgradeIncomePrice - buildingDetails.moneySpent;
     }
 
     public void SaveBip()
     {
-        _globalManager.currentData.buildingInProgressStatsList.Add(new BuildingInProgressStats(buildingDetails.buildingName, gameObject.activeInHierarchy, underConstruction, remainingTime, buildingDetails.incomeDuringConstruction, buildingDetails.upgradeIncomePrice, buildingDetails.upgradeLVL));
+        _globalManager.currentData.buildingInProgressStatsList.Add(new BuildingInProgressStats(buildingDetails.buildingName, gameObject.activeInHierarchy, underConstruction, remainingTime, buildingDetails.incomeDuringConstruction, buildingDetails.upgradeIncomePrice, buildingDetails.upgradeLVL, buildingDetails.moneySpent));
     }
 
     public void UpdateBipDetails()
@@ -137,6 +138,7 @@ public class BuildingUnderConstruction : MonoBehaviour
                 _globalManager.currentData.buildingInProgressStatsList[i].bipUpgradeIncomePrice =
                     buildingDetails.upgradeIncomePrice;
                 _globalManager.currentData.buildingInProgressStatsList[i].bipLvl = buildingDetails.upgradeLVL;
+                _globalManager.currentData.buildingInProgressStatsList[i].moneySpent = buildingDetails.moneySpent;
             }
         }
         
@@ -154,6 +156,7 @@ public class BuildingUnderConstruction : MonoBehaviour
                 buildingDetails.incomeDuringConstruction = _globalManager.currentData.buildingInProgressStatsList[i].bipIncomeDuringConstruction;
                 buildingDetails.upgradeIncomePrice = _globalManager.currentData.buildingInProgressStatsList[i].bipUpgradeIncomePrice;
                 buildingDetails.upgradeLVL = _globalManager.currentData.buildingInProgressStatsList[i].bipLvl;
+                buildingDetails.moneySpent = _globalManager.currentData.buildingInProgressStatsList[i].moneySpent;
             }
         }
     }
@@ -197,6 +200,7 @@ public struct BuildingDetails
     public float completionBonus;
     public int upgradeLVL;
     public int buildersNeeded;
+    public float moneySpent;
 }
 
 [Serializable]

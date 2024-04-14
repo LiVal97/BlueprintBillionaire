@@ -324,6 +324,7 @@ public class CanvasManager : MonoBehaviour
     {
         _globalManager.SaveGame();
         Application.Quit();
+        Debug.Log("Game Quited");
     }
     
     private void RefreshSettings()

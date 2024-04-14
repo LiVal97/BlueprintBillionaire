@@ -37,14 +37,14 @@ public class GlobalManager : MonoBehaviour
 
     private void ResetSaveData()
     {
-        playersData.musicVolume = 0.3f;
-        playersData.effectsVolume = 1f;
-        playersData.money = 2000f;
-        playersData.revenuePerSecond = 0f;
-        playersData.totalWorkers = 1;
-        playersData.availableWorkers = 1;
-        playersData.completedBuildingsStatsList.Clear();
-        playersData.buildingInProgressStatsList.Clear();
+        currentData.musicVolume = 0.3f;
+        currentData.effectsVolume = 1f;
+        currentData.money = 2000f;
+        currentData.revenuePerSecond = 0f;
+        currentData.totalWorkers = 1;
+        currentData.availableWorkers = 1;
+        currentData.completedBuildingsStatsList.Clear();
+        currentData.buildingInProgressStatsList.Clear();
         SaveGame();
     }
     

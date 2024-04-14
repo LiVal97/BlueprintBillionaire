@@ -68,9 +68,10 @@ public class BuildingInProgressStats
     public float bipIncomeDuringConstruction;
     public float bipUpgradeIncomePrice;
     public int bipLvl;
+    public float moneySpent;
 
     public BuildingInProgressStats(string bipName, bool bipStatus, bool bipInConstructionStatus, 
-        float bipRemainingTime, float bipIncomeDuringConstruction, float bipUpgradeIncomePrice, int bipLvl)
+        float bipRemainingTime, float bipIncomeDuringConstruction, float bipUpgradeIncomePrice, int bipLvl, float moneySpent)
     {
         this.bipName = bipName;
         this.bipStatus = bipStatus;
@@ -79,6 +80,7 @@ public class BuildingInProgressStats
         this.bipIncomeDuringConstruction = bipIncomeDuringConstruction;
         this.bipUpgradeIncomePrice = bipUpgradeIncomePrice;
         this.bipLvl = bipLvl;
+        this.moneySpent = moneySpent;
     }
 }
 
