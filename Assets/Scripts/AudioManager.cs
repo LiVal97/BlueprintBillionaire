@@ -9,8 +9,6 @@ public class AudioManager : MonoBehaviour
     public AudioMixer audioMixer;
     private AudioSource _audioSource;
     public AudioClip qlickClip;
-    public Slider musicSlider;
-    public Slider sfxSlider;
 
     public static AudioManager instance;
     private GlobalManager _globalManager;
@@ -33,7 +31,6 @@ public class AudioManager : MonoBehaviour
     {
         _audioSource = GetComponent<AudioSource>();
         _globalManager = FindObjectOfType<GlobalManager>();
-        RefreshSettings();
     }
 
     public void MusicVolume(float musicSliderValue)
@@ -56,9 +53,5 @@ public class AudioManager : MonoBehaviour
         _audioSource.Play();
     }
 
-    private void RefreshSettings()
-    {
-        musicSlider.value = _globalManager.currentData.musicVolume;
-        sfxSlider.value = _globalManager.currentData.effectsVolume;
-    }
+    
 }

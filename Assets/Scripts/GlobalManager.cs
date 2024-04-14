@@ -7,9 +7,19 @@ public class GlobalManager : MonoBehaviour
 {
     public PlayersData playersData;
     public PlayersData currentData;
+    public static GlobalManager instance;
 
     private void Awake()
     {
+        if (!instance)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
         //ResetSaveData();
         currentData = SaveData.LoadData();
     }
