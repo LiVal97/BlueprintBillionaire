@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
@@ -132,6 +133,7 @@ public class CanvasManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             int layerMask6 = 1 << 6;
             int layerMask7 = 1 << 7;
+            int layerMask5UI = 1 << 5;
             RaycastHit rayHit;
 
             if (Physics.Raycast(ray, out rayHit,100.0f, layerMask6 | layerMask7))
@@ -150,7 +152,9 @@ public class CanvasManager : MonoBehaviour
                     Debug.Log("CompletedBuildingClicked");
                     CloseBuildingUCPopUp();
                 }
-            }
+                
+            } 
+            
         } 
     }
     

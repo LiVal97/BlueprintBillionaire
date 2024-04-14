@@ -12,11 +12,12 @@ public class BuildingUnderConstruction : MonoBehaviour
     [Header("   Construction Site Details")]
     public BuildingDetails buildingDetails;
     [HideInInspector] public float remainingTime;
-    public bool underConstruction;
     [HideInInspector] public float moneyToReceive;
     [HideInInspector] public float moneyToReceiveAfterUpgrade;
     private float _moneyMade;
     private float _timer;
+    public bool underConstruction;
+    public GameObject builders;
 
     [Header("   Completed Construction Details")]
     public GameObject completedBuilding;
@@ -58,7 +59,7 @@ public class BuildingUnderConstruction : MonoBehaviour
             //gameManager.AddMoneyOverTime(buildingDetails.incomeDuringConstruction);
             EstimateRevenueToReceive();
             Debug.Log(gameObject.name + "Start construction");
-            
+            builders.SetActive(true);
         }
 
         if (remainingTime <= 0f)

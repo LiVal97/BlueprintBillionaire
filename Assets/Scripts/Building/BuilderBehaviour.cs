@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = System.Random;
 
 public class BuilderBehaviour : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class BuilderBehaviour : MonoBehaviour
     [SerializeField] private bool isWalking = true;
     [SerializeField] private bool isCarrying;
     [SerializeField] private bool isBuilding;
+    [SerializeField] private bool isHitGround;
     [SerializeField] private bool isIdle;
     [SerializeField] private bool isPuttingDown;
     [SerializeField] private bool moveToNextWayP = true;
@@ -107,6 +109,29 @@ public class BuilderBehaviour : MonoBehaviour
             }
         }
         
+        if (isHitGround)
+        {
+            Vector3 eulerRotation = new Vector3(transform.eulerAngles.x,
+                wayPoints[wayPointNo].transform.eulerAngles.y, transform.eulerAngles.z);
+            transform.rotation = Quaternion.Euler(eulerRotation);
+            if (timer >= buildingTime)
+            {
+                Debug.Log("Stop Building");
+                isHitGround = false;
+                anim.SetBool("isHitingGround", isHitGround);
+                hammer.SetActive(false);
+                wayPoints[wayPointNo].isOcupied = false;
+                wayPointNo++;
+                if (wayPointNo > wayPoints.Length -1)
+                {
+                    wayPointNo = 0;
+                }
+                moveToNextWayP = true;
+                isWalking = true;
+                anim.SetBool("isWalking", isWalking);
+            }
+        }
+        
         ChooseAnimation();
     }
     private void ChooseAnimation()
@@ -114,6 +139,7 @@ public class BuilderBehaviour : MonoBehaviour
         anim.SetBool("isWalking", isWalking);
         anim.SetBool("isCarrying", isCarrying);
         anim.SetBool("isBuilding", isBuilding);
+        anim.SetBool("isHitingGround", isHitGround);
         anim.SetBool("isIdle", isIdle);
         anim.SetBool("isPuttingDown", isPuttingDown);
     }
@@ -124,109 +150,145 @@ public class BuilderBehaviour : MonoBehaviour
         {
             if (wayPoints[wayPointNo].gameObject.CompareTag("WalkWayP") && distanceToWayP <=2 && moveToNextWayP)
             {
+                if (carryObject != null)
+                {
+                    Destroy(carryObject);
+                }
                 moveToNextWayP = true;
                 isWalking = true;
                 isBuilding = false;
+                isHitGround = false;
                 isCarrying = false;
                 isIdle = false;
                 isPuttingDown = false;
                 anim.SetBool("isWalking", isWalking);
                 anim.SetBool("isCarrying", isCarrying);
                 anim.SetBool("isBuilding", isBuilding);
+                anim.SetBool("isHitingGround", isHitGround);
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 wayPointNo++;
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
-            /*else
-            {
-                moveToNextWayP = true;
-                isWalking = true;
-            }*/
-            
+
         }
 
         if (other.gameObject.CompareTag("CarryWayP"))
         {
             if (wayPoints[wayPointNo].gameObject.CompareTag("CarryWayP")  && distanceToWayP <=2 && moveToNextWayP)
             {
+                if (carryObject != null)
+                {
+                    Destroy(carryObject);
+                }
                 moveToNextWayP = true;
                 isWalking = false;
                 isBuilding = false;
+                isHitGround = false;
                 isCarrying = true;
                 isIdle = false;
                 isPuttingDown = false;
                 anim.SetBool("isWalking", isWalking);
                 anim.SetBool("isCarrying", isCarrying);
                 anim.SetBool("isBuilding", isBuilding);
+                anim.SetBool("isHitingGround", isHitGround);
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 carryObject = Instantiate(wayPoints[wayPointNo].carryObject,carryingPlace.transform.position, wayPoints[wayPointNo].carryObject.transform.rotation, carryingPlace.transform);
                 wayPointNo++;
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
-            /*else
-            {
-                moveToNextWayP = true;
-                isWalking = true;
-            }*/
-            
+
         }
         
         if (other.gameObject.CompareTag("IdleWayP"))
         {
             if (wayPoints[wayPointNo].gameObject.CompareTag("IdleWayP") && distanceToWayP <=2 && moveToNextWayP)
             {
+                anim.SetInteger("IdleIndex", UnityEngine.Random.Range(0, 3));
+                if (carryObject != null)
+                {
+                    Destroy(carryObject);
+                }
                 timer = 0f;
                 moveToNextWayP = false;
                 isWalking = false;
                 isBuilding = false;
+                isHitGround = false;
                 isCarrying = false;
                 isIdle = true;
                 isPuttingDown = false;
                 anim.SetBool("isWalking", isWalking);
                 anim.SetBool("isCarrying", isCarrying);
                 anim.SetBool("isBuilding", isBuilding);
+                anim.SetBool("isHitingGround", isHitGround);
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 wayPoints[wayPointNo].isOcupied = true;
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
-            /*else
-            {
-                moveToNextWayP = true;
-                isWalking = true;
-            }*/
         }
         
         if (other.CompareTag("BuildWayP"))
         {
             if (wayPoints[wayPointNo].gameObject.CompareTag("BuildWayP") && distanceToWayP <= 2 && moveToNextWayP)
             {
+                if (carryObject != null)
+                {
+                    Destroy(carryObject);
+                }
                 Debug.Log(" Build Collision Detected");
                 timer = 0f;
                 hammer.SetActive(true);
                 moveToNextWayP = false;
                 isWalking = false;
                 isBuilding = true;
+                isHitGround = false;
                 isCarrying = false;
                 isIdle = false;
                 isPuttingDown = false;
                 anim.SetBool("isWalking", isWalking);
                 anim.SetBool("isCarrying", isCarrying);
                 anim.SetBool("isBuilding", isBuilding);
+                anim.SetBool("isHitingGround", isHitGround);
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 wayPoints[wayPointNo].isOcupied = true;
                 
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
-            /*else
+
+        }
+        
+        if (other.CompareTag("hitGroundWayP"))
+        {
+            if (wayPoints[wayPointNo].gameObject.CompareTag("hitGroundWayP") && distanceToWayP <= 2 && moveToNextWayP)
             {
-                moveToNextWayP = true;
-                isWalking = true;
-            }*/
-            
+                if (carryObject != null)
+                {
+                    Destroy(carryObject);
+                }
+                Debug.Log(" Build Collision Detected");
+                timer = 0f;
+                hammer.SetActive(true);
+                moveToNextWayP = false;
+                isWalking = false;
+                isBuilding = false;
+                isHitGround = true;
+                isCarrying = false;
+                isIdle = false;
+                isPuttingDown = false;
+                anim.SetBool("isWalking", isWalking);
+                anim.SetBool("isCarrying", isCarrying);
+                anim.SetBool("isBuilding", isBuilding);
+                anim.SetBool("isHitingGround", isHitGround);
+                anim.SetBool("isIdle", isIdle);
+                anim.SetBool("isPuttingDown", isPuttingDown);
+                wayPoints[wayPointNo].isOcupied = true;
+                
+                //Debug.Log("Have reach " + other.gameObject.name);
+            }
+
         }
         
         if (other.CompareTag("PlaceOnTheGroundWayP"))
@@ -236,22 +298,19 @@ public class BuilderBehaviour : MonoBehaviour
                 moveToNextWayP = false;
                 isWalking = false;
                 isBuilding = false;
+                isHitGround = false;
                 isCarrying = false;
                 isIdle = false;
                 isPuttingDown = true;
                 anim.SetBool("isWalking", isWalking);
                 anim.SetBool("isCarrying", isCarrying);
                 anim.SetBool("isBuilding", isBuilding);
+                anim.SetBool("isHitingGround", isHitGround);
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
-            /*else
-            {
-                moveToNextWayP = true;
-                isWalking = true;
-            }*/
-            
+
         }
     }
 
@@ -260,12 +319,14 @@ public class BuilderBehaviour : MonoBehaviour
         moveToNextWayP = true;
         isWalking = true;
         isBuilding = false;
+        isHitGround = false;
         isCarrying = false;
         isIdle = false;
         isPuttingDown = false;
         anim.SetBool("isWalking", isWalking);
         anim.SetBool("isCarrying", isCarrying);
         anim.SetBool("isBuilding", isBuilding);
+        anim.SetBool("isHitingGround", isHitGround);
         anim.SetBool("isIdle", isIdle);
         anim.SetBool("isPuttingDown", isPuttingDown);
         wayPointNo++;
