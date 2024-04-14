@@ -31,11 +31,12 @@ public class SaveData : MonoBehaviour
         {
             PlayersData newPlayer = new PlayersData();
             
-            newPlayer.musicVolume = 1f;
+            newPlayer.musicVolume = 0.3f;
             newPlayer.effectsVolume = 1f;
             newPlayer.money = 2000f;
             newPlayer.revenuePerSecond = 0f;
-            newPlayer.workers = 1;
+            newPlayer.totalWorkers = 1;
+            newPlayer.availableWorkers = 1;
             //newPlayer.hireWorkerPrice = 100f;
             return newPlayer;
         }
@@ -50,7 +51,8 @@ public class PlayersData
     public float effectsVolume;
     public float money;
     public float revenuePerSecond;
-    public int workers;
+    public int totalWorkers;
+    public int availableWorkers;
 
     public List<BuildingInProgressStats> buildingInProgressStatsList = new List<BuildingInProgressStats>();
     public List<CompletedBuildingsStats> completedBuildingsStatsList = new List<CompletedBuildingsStats>();

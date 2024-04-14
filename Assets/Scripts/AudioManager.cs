@@ -39,15 +39,15 @@ public class AudioManager : MonoBehaviour
     public void MusicVolume(float musicSliderValue)
     {
         audioMixer.SetFloat("MusicVolume", Mathf.Log10(musicSliderValue) * 20);
-        _globalManager.playersData.musicVolume = musicSliderValue;
-        SaveData.SaveCurrentData(_globalManager.playersData);
+        _globalManager.currentData.musicVolume = musicSliderValue;
+        _globalManager.SaveGame();
     }
 
     public void SfxVolume(float sfxSliderValue)
     {
         audioMixer.SetFloat("SFXVolume", Mathf.Log10(sfxSliderValue) * 20);
-        _globalManager.playersData.effectsVolume = sfxSliderValue;
-        SaveData.SaveCurrentData(_globalManager.playersData);
+        _globalManager.currentData.effectsVolume = sfxSliderValue;
+        _globalManager.SaveGame();
     }
 
     public void ClickSound()
@@ -58,7 +58,7 @@ public class AudioManager : MonoBehaviour
 
     private void RefreshSettings()
     {
-        musicSlider.value = _globalManager.playersData.musicVolume;
-        sfxSlider.value = _globalManager.playersData.effectsVolume;
+        musicSlider.value = _globalManager.currentData.musicVolume;
+        sfxSlider.value = _globalManager.currentData.effectsVolume;
     }
 }

@@ -31,15 +31,20 @@ public class BuilderBehaviour : MonoBehaviour
     private GameObject carryObject;
     public GameObject carryingPlace;
     public GameObject hammer;
+
+    private AudioSource _audioSource;
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
     }
-
+    
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("AudioSource is playing = " + _audioSource.isPlaying);
+        Debug.Log("Audio Pitch is" + _audioSource.pitch);
         distanceToWayP = Mathf.Abs(Vector3.Distance(wayPoints[wayPointNo].transform.position, transform.position));
         timer += Time.deltaTime;
 
@@ -91,10 +96,12 @@ public class BuilderBehaviour : MonoBehaviour
             Vector3 eulerRotation = new Vector3(transform.eulerAngles.x,
                 wayPoints[wayPointNo].transform.eulerAngles.y, transform.eulerAngles.z);
             transform.rotation = Quaternion.Euler(eulerRotation);
+            
             if (timer >= buildingTime)
             {
                 Debug.Log("Stop Building");
                 isBuilding = false;
+                _audioSource.Stop();
                 anim.SetBool("isBuilding", isBuilding);
                 hammer.SetActive(false);
                 wayPoints[wayPointNo].isOcupied = false;
@@ -118,6 +125,7 @@ public class BuilderBehaviour : MonoBehaviour
             {
                 Debug.Log("Stop Building");
                 isHitGround = false;
+                _audioSource.Stop();
                 anim.SetBool("isHitingGround", isHitGround);
                 hammer.SetActive(false);
                 wayPoints[wayPointNo].isOcupied = false;
@@ -254,7 +262,7 @@ public class BuilderBehaviour : MonoBehaviour
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 wayPoints[wayPointNo].isOcupied = true;
-                
+                _audioSource.Play();
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
 
@@ -285,7 +293,7 @@ public class BuilderBehaviour : MonoBehaviour
                 anim.SetBool("isIdle", isIdle);
                 anim.SetBool("isPuttingDown", isPuttingDown);
                 wayPoints[wayPointNo].isOcupied = true;
-                
+                _audioSource.Play();
                 //Debug.Log("Have reach " + other.gameObject.name);
             }
 

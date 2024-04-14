@@ -21,6 +21,7 @@ public class CanvasManager : MonoBehaviour
     public GameObject bucCompletionBonusPannel;
     public TMP_Text bucBuildingNameText;
     public TMP_Text bucStartingCapitalText;
+    public TMP_Text bucBuildersNeededText;
     public TMP_Text bucUpgradePriceText;
     public TMP_Text bucBuildingDurationTime;
     public TMP_Text bucRevenueDuringCompletion;
@@ -59,6 +60,8 @@ public class CanvasManager : MonoBehaviour
     private AudioManager _audioManager;
     private GlobalManager _globalManager;
 
+    [SerializeField] private bool popUpActive;
+
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -74,10 +77,16 @@ public class CanvasManager : MonoBehaviour
         CheckBipStatus();
         PresentMoney();
         PresentWorkersNo();
+
+        if (!bucNotStartedBuildingPopUp.activeInHierarchy && !completedBuildingPopUp.activeInHierarchy)
+        {
+            popUpActive = false;
+        }
     }
 
     private void BuildingUnderConstructionPopUp()
     {
+        popUpActive = true;
         bucNotStartedBuildingPopUp.SetActive(true);
         if (buildingUnderConstructionClicked.underConstruction)
         {
@@ -97,22 +106,23 @@ public class CanvasManager : MonoBehaviour
         }
         
         bucBuildingNameText.text = buildingUnderConstructionClicked.buildingDetails.buildingName;
-        bucStartingCapitalText.text = buildingUnderConstructionClicked.buildingDetails.startingCapital.ToString("#,###");
+        bucStartingCapitalText.text = buildingUnderConstructionClicked.buildingDetails.startingCapital.ToString("#,##0");
+        bucBuildersNeededText.text = buildingUnderConstructionClicked.buildingDetails.buildersNeeded.ToString("#,##0");
         bucRevenueDuringCompletion.text =
-            buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
-        bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
-        bucCompletionBonus.text = buildingUnderConstructionClicked.buildingDetails.completionBonus.ToString("#,###");
-        bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
+            buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,##0.##");
+        bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,##0");
+        bucCompletionBonus.text = buildingUnderConstructionClicked.buildingDetails.completionBonus.ToString("#,##0");
+        bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,##0");
     }
 
     private void BucUpdatedStats()
     {
         if (buildingUnderConstructionClicked)
         {
-            bucBuildingDurationTime.text = buildingUnderConstructionClicked.remainingTime.ToString("#,###");
-            bucCurrentEstimatedRevenue.text = buildingUnderConstructionClicked.moneyToReceive.ToString("#,###");
+            bucBuildingDurationTime.text = buildingUnderConstructionClicked.remainingTime.ToString("#,##0");
+            bucCurrentEstimatedRevenue.text = buildingUnderConstructionClicked.moneyToReceive.ToString("#,##0");
             bucEstimatedRevenueAfterUpgrade.text =
-                buildingUnderConstructionClicked.moneyToReceiveAfterUpgrade.ToString("#,###");
+                buildingUnderConstructionClicked.moneyToReceiveAfterUpgrade.ToString("#,##0");
             //bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
         }
     }
@@ -128,110 +138,118 @@ public class CanvasManager : MonoBehaviour
 
     private void BuildingClick()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!popUpActive)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            int layerMask6 = 1 << 6;
-            int layerMask7 = 1 << 7;
-            int layerMask5UI = 1 << 5;
-            RaycastHit rayHit;
-
-            if (Physics.Raycast(ray, out rayHit,100.0f, layerMask6 | layerMask7))
+            if (Input.GetMouseButtonDown(0))
             {
-                if (rayHit.transform.gameObject.GetComponent<BuildingUnderConstruction>() != null)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                int layerMask6 = 1 << 6;
+                int layerMask7 = 1 << 7;
+                int layerMask5UI = 1 << 5;
+                RaycastHit rayHit;
+
+                if (Physics.Raycast(ray, out rayHit,100.0f, layerMask6 | layerMask7))
                 {
-                    buildingUnderConstructionClicked = rayHit.transform.gameObject.GetComponent<BuildingUnderConstruction>();
-                    BuildingUnderConstructionPopUp();
-                    Debug.Log("Construction " + buildingUnderConstructionClicked.name+" start = " + buildingUnderConstructionClicked.underConstruction);
-                    CloseCbPopUp();
+                    if (rayHit.transform.gameObject.GetComponent<BuildingUnderConstruction>() != null)
+                    {
+                        buildingUnderConstructionClicked = rayHit.transform.gameObject.GetComponent<BuildingUnderConstruction>();
+                        CloseCbPopUp();
+                        BuildingUnderConstructionPopUp();
+                        Debug.Log("Construction " + buildingUnderConstructionClicked.name+" start = " + buildingUnderConstructionClicked.underConstruction);
+                        
+                    }
+                    if (rayHit.transform.gameObject.GetComponent<CompletedBuilding>() != null)
+                    {
+                        completedBuildingClicked = rayHit.transform.gameObject.GetComponent<CompletedBuilding>();
+                        CloseBuildingUCPopUp();
+                        CompletedBuildingPopUp();
+                        Debug.Log("CompletedBuildingClicked");
+                        
+                    }
                 }
-                if (rayHit.transform.gameObject.GetComponent<CompletedBuilding>() != null)
-                {
-                    completedBuildingClicked = rayHit.transform.gameObject.GetComponent<CompletedBuilding>();
-                    CompletedBuildingPopUp();
-                    Debug.Log("CompletedBuildingClicked");
-                    CloseBuildingUCPopUp();
-                }
-                
             } 
-            
-        } 
+        }
+         
     }
     
     private void CompletedBuildingPopUp()
     {
+        popUpActive = true;
         completedBuildingPopUp.SetActive(true);
         cbNameText.text = completedBuildingClicked.completeBuildingDetails.buildingName;
         cbRevenuePerSecondAmountText.text =
-            completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,###.##");
-        cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,###");
-        cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,###");
+            completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,##0.##");
+        cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,##0");
+        cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,##0");
     }
 
     public void CloseBuildingUCPopUp()
     {
+        popUpActive = false;
         bucNotStartedBuildingPopUp.SetActive(false);
         buildingUnderConstructionClicked = null;
     }
 
     public void CloseCbPopUp()
     {
+        popUpActive = false;
         completedBuildingPopUp.SetActive(false);
         completedBuildingClicked = null;
     }
 
     public void UpgradeInProgressBuilding()
     {
-        if (buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice <= gameManager.money)
+        if (buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice <= _globalManager.currentData.money)
         {
             gameManager.RemoveMoney(buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice);
             buildingUnderConstructionClicked.BuildingUpgrade();
             bucRevenueDuringCompletion.text =
-                buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,###.##");
-            bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,###");
-            gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction - buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction/buildingUnderConstructionClicked.buildingDetails.incomeMultiplier;
-            bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,###");
+                buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction.ToString("#,##0.##");
+            bucUpgradePriceText.text = buildingUnderConstructionClicked.buildingDetails.upgradeIncomePrice.ToString("#,##0");
+            _globalManager.currentData.revenuePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction - buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction/buildingUnderConstructionClicked.buildingDetails.incomeMultiplier;
+            bucBuildingLvl.text = "LVL: " + buildingUnderConstructionClicked.buildingDetails.upgradeLVL.ToString("#,##0");
             //Update building info in the save file
             buildingUnderConstructionClicked.UpdateBipDetails();
-            SaveData.SaveCurrentData(_globalManager.playersData);
+            _globalManager.SaveGame();
         }
     }
 
     public void UpgradeCompletedBuilding()
     {
-        if (completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice <= gameManager.money)
+        if (completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice <= _globalManager.currentData.money)
         {
             gameManager.RemoveMoney(completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice);
             
             completedBuildingClicked.UpgradeCompleteBuilding();
             
-            cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,###");
+            cbUpgradePriceText.text = completedBuildingClicked.completeBuildingDetails.upgradeIncomePrice.ToString("#,##0");
             cbRevenuePerSecondAmountText.text =
-                completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,###.##");
-            cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,###");
+                completedBuildingClicked.completeBuildingDetails.incomeOverTime.ToString("#,##0.##");
+            cbLvlText.text = "LVL: " + completedBuildingClicked.completeBuildingDetails.upgradeLVL.ToString("#,##0");
             
-            gameManager.incomePerSecond += completedBuildingClicked.completeBuildingDetails.incomeOverTime -
+            _globalManager.currentData.revenuePerSecond += completedBuildingClicked.completeBuildingDetails.incomeOverTime -
                                            completedBuildingClicked.completeBuildingDetails.incomeOverTime / completedBuildingClicked
                                                .completeBuildingDetails.incomeMultiplier;
             
             //Update building info in the save file
             completedBuildingClicked.UpdateCbData();
-            SaveData.SaveCurrentData(_globalManager.playersData);
+            _globalManager.SaveGame();
         }
         
     }
 
     public void StartConstruction()
     {
-        if (buildingUnderConstructionClicked.buildingDetails.startingCapital <= gameManager.money)
+        if (buildingUnderConstructionClicked.buildingDetails.startingCapital <= _globalManager.currentData.money && buildingUnderConstructionClicked.buildingDetails.buildersNeeded <= _globalManager.currentData.availableWorkers)
         {
             gameManager.RemoveMoney(buildingUnderConstructionClicked.buildingDetails.startingCapital);
+            _globalManager.currentData.availableWorkers -= buildingUnderConstructionClicked.buildingDetails.buildersNeeded;
             buildingUnderConstructionClicked.underConstruction = true;
             BuildingUnderConstructionPopUp();
-            gameManager.incomePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction;
+            _globalManager.currentData.revenuePerSecond += buildingUnderConstructionClicked.buildingDetails.incomeDuringConstruction;
             //Save building info in the save file
             buildingUnderConstructionClicked.SaveBip();
-            SaveData.SaveCurrentData(_globalManager.playersData);
+            _globalManager.SaveGame();
         }
         
     }
@@ -256,43 +274,32 @@ public class CanvasManager : MonoBehaviour
     {
         _audioManager.ClickSound();
         gameManager.HireWorker();
-        SaveData.SaveCurrentData(_globalManager.playersData);
+        _globalManager.SaveGame();
     }
 
     private void UpdateHireAmountToPay()
     {
         if (addWorkers.gameObject.activeInHierarchy)
         {
-            hireAmountToPayText.text = gameManager.hirePrice.ToString("#,###");
+            hireAmountToPayText.text = gameManager.hirePrice.ToString("#,##0");
         }
     }
 
     private void PresentMoney()
     {
-        if (gameManager.money == 0)
+        if (_globalManager.currentData.money >= 0 )
         {
-            moneyText.text = "0";
+            moneyText.text = _globalManager.currentData.money.ToString("#,##0");
         }
-        
-        if (gameManager.money > 0 )
+        if (_globalManager.currentData.revenuePerSecond >= 0)
         {
-            moneyText.text = gameManager.money.ToString("#,###");
-        }
-        
-        if (gameManager.incomePerSecond == 0)
-        {
-            incomePerSecondText.text = "0/Sec";
-        }
-        
-        if (gameManager.incomePerSecond > 0)
-        {
-            incomePerSecondText.text = gameManager.incomePerSecond.ToString("#,###.##") + "/Sec";    
+            incomePerSecondText.text = _globalManager.currentData.revenuePerSecond.ToString("#,##0.##") + "/Sec";    
         }
     }
 
     private void PresentWorkersNo()
     {
-        workerNoText.text = gameManager.workersNo.ToString("#,###");
+        workerNoText.text = _globalManager.currentData.availableWorkers.ToString("#,##0") + " / " +_globalManager.currentData.totalWorkers.ToString("#,##0");
     }
 
     public void OpenSettings()
@@ -313,7 +320,7 @@ public class CanvasManager : MonoBehaviour
 
     public void ExitGame()
     {
-        SaveData.SaveCurrentData(_globalManager.playersData);
+        _globalManager.SaveGame();
         Application.Quit();
     }
 }

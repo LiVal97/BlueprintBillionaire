@@ -11,9 +11,12 @@ public class CompletedBuilding : MonoBehaviour
     private GlobalManager _globalManager;
 
     public bool buildingCompleted;
-
     private bool _cbSaved;
-    
+
+    public GameObject[] appendicesLvl25;
+    public GameObject[] appendicesLvl50;
+    public GameObject[] appendicesLvl75;
+    public GameObject[] appendicesLvl100;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +33,43 @@ public class CompletedBuilding : MonoBehaviour
         //StartCoroutine(SaveCbUpdatesRecurrent());
     }
 
+    private void Update()
+    {
+        ShowAppendices();
+    }
+
+    private void ShowAppendices()
+    {
+        
+        if (completeBuildingDetails.upgradeLVL >= 25)
+        {
+            for (int i = 0; i < appendicesLvl25.Length; i++)
+            {
+                appendicesLvl25[i].SetActive(true);
+            }
+        }
+        if (completeBuildingDetails.upgradeLVL >= 50)
+        {
+            for (int i = 0; i < appendicesLvl50.Length; i++)
+            {
+                appendicesLvl50[i].SetActive(true);
+            }
+        }
+        if (completeBuildingDetails.upgradeLVL >= 75)
+        {
+            for (int i = 0; i < appendicesLvl75.Length; i++)
+            {
+                appendicesLvl75[i].SetActive(true);
+            }
+        }
+        if (completeBuildingDetails.upgradeLVL >= 100)
+        {
+            for (int i = 0; i < appendicesLvl100.Length; i++)
+            {
+                appendicesLvl100[i].SetActive(true);
+            }
+        }
+    }
     public void UpgradeCompleteBuilding()
     {
         completeBuildingDetails.incomeOverTime *= completeBuildingDetails.incomeMultiplier;
@@ -41,50 +81,41 @@ public class CompletedBuilding : MonoBehaviour
     private void SaveCb()
     {
         _cbSaved = true;
-        _globalManager.playersData.completedBuildingsStatsList.Add(new CompletedBuildingsStats(completeBuildingDetails.buildingName, gameObject.activeInHierarchy,_cbSaved, completeBuildingDetails.incomeOverTime, completeBuildingDetails.upgradeIncomePrice, completeBuildingDetails.upgradeLVL));
-        _gameManager.incomePerSecond += completeBuildingDetails.incomeOverTime;
-        SaveData.SaveCurrentData(_globalManager.playersData);
+        _globalManager.currentData.completedBuildingsStatsList.Add(new CompletedBuildingsStats(completeBuildingDetails.buildingName, gameObject.activeInHierarchy,_cbSaved, completeBuildingDetails.incomeOverTime, completeBuildingDetails.upgradeIncomePrice, completeBuildingDetails.upgradeLVL));
+        _globalManager.currentData.revenuePerSecond += completeBuildingDetails.incomeOverTime;
+        _globalManager.SaveGame();
     }
 
     public void UpdateCbData()
     {
-        for (int i = 0; i < _globalManager.playersData.completedBuildingsStatsList.Count; i++)
+        for (int i = 0; i < _globalManager.currentData.completedBuildingsStatsList.Count; i++)
         {
-            if (_globalManager.playersData.completedBuildingsStatsList[i].cbName == completeBuildingDetails.buildingName)
+            if (_globalManager.currentData.completedBuildingsStatsList[i].cbName == completeBuildingDetails.buildingName)
             {
-                _globalManager.playersData.completedBuildingsStatsList[i].cbStatus = gameObject.activeInHierarchy;
-                _globalManager.playersData.completedBuildingsStatsList[i].cbIncomeOverTime =
+                _globalManager.currentData.completedBuildingsStatsList[i].cbStatus = gameObject.activeInHierarchy;
+                _globalManager.currentData.completedBuildingsStatsList[i].cbIncomeOverTime =
                     completeBuildingDetails.incomeOverTime;
-                _globalManager.playersData.completedBuildingsStatsList[i].cbUpgradeIncomePrice =
+                _globalManager.currentData.completedBuildingsStatsList[i].cbUpgradeIncomePrice =
                     completeBuildingDetails.upgradeIncomePrice;
-                _globalManager.playersData.completedBuildingsStatsList[i].cbLvl = completeBuildingDetails.upgradeLVL;
+                _globalManager.currentData.completedBuildingsStatsList[i].cbLvl = completeBuildingDetails.upgradeLVL;
             }
         }
     }
     
     public void LoadCbData()
     {
-        for (int i = 0; i < _globalManager.playersData.completedBuildingsStatsList.Count; i++)
+        for (int i = 0; i < _globalManager.currentData.completedBuildingsStatsList.Count; i++)
         {
-            if (_globalManager.playersData.completedBuildingsStatsList[i].cbName == completeBuildingDetails.buildingName)
+            if (_globalManager.currentData.completedBuildingsStatsList[i].cbName == completeBuildingDetails.buildingName)
             {
-                    gameObject.SetActive(_globalManager.playersData.completedBuildingsStatsList[i].cbStatus);
-                    completeBuildingDetails.incomeOverTime = _globalManager.playersData.completedBuildingsStatsList[i].cbIncomeOverTime;
-                    completeBuildingDetails.upgradeIncomePrice = _globalManager.playersData.completedBuildingsStatsList[i].cbUpgradeIncomePrice;
-                    completeBuildingDetails.upgradeLVL = _globalManager.playersData.completedBuildingsStatsList[i].cbLvl;
-                    _cbSaved = _globalManager.playersData.completedBuildingsStatsList[i].cbSaved;
+                    gameObject.SetActive(_globalManager.currentData.completedBuildingsStatsList[i].cbStatus);
+                    completeBuildingDetails.incomeOverTime = _globalManager.currentData.completedBuildingsStatsList[i].cbIncomeOverTime;
+                    completeBuildingDetails.upgradeIncomePrice = _globalManager.currentData.completedBuildingsStatsList[i].cbUpgradeIncomePrice;
+                    completeBuildingDetails.upgradeLVL = _globalManager.currentData.completedBuildingsStatsList[i].cbLvl;
+                    _cbSaved = _globalManager.currentData.completedBuildingsStatsList[i].cbSaved;
             }
         }
     }
-
-    /*private IEnumerator SaveCbUpdatesRecurrent()
-    {
-        while (true)
-        {
-            UpdateCbData();
-            yield return new WaitForSeconds(120);
-        }
-    }*/
 }
 
 [Serializable]

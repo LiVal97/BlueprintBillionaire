@@ -6,31 +6,33 @@ using UnityEngine;
 public class GlobalManager : MonoBehaviour
 {
     public PlayersData playersData;
+    public PlayersData currentData;
 
     private void Awake()
     {
         //ResetSaveData();
-        playersData = SaveData.LoadData();
+        currentData = SaveData.LoadData();
     }
 
-    void Start()
+    private void OnApplicationQuit()
     {
-        
+        SaveGame();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SaveGame()
     {
-        
+        playersData = currentData;
+        SaveData.SaveCurrentData(playersData);
     }
 
     private void ResetSaveData()
     {
-        playersData.musicVolume = 1f;
+        playersData.musicVolume = 0.3f;
         playersData.effectsVolume = 1f;
         playersData.money = 2000f;
         playersData.revenuePerSecond = 0f;
-        playersData.workers = 1;
+        playersData.totalWorkers = 1;
+        playersData.availableWorkers = 1;
         //playersData.hireWorkerPrice = 100f;
         playersData.completedBuildingsStatsList.Clear();
         playersData.buildingInProgressStatsList.Clear();

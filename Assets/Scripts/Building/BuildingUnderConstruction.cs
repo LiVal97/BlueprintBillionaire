@@ -18,12 +18,12 @@ public class BuildingUnderConstruction : MonoBehaviour
     private float _timer;
     public bool underConstruction;
     public GameObject builders;
+    
 
     [Header("   Completed Construction Details")]
     public GameObject completedBuilding;
     private CompletedBuilding cBuilding;
-    public GameObject appendices;
-    
+
     [Header("   Stages")] 
     public List<ConstructionStages> stage;
 
@@ -65,7 +65,8 @@ public class BuildingUnderConstruction : MonoBehaviour
         if (remainingTime <= 0f)
         {
             gameManager.AddMoneyInstant(buildingDetails.completionBonus);
-            gameManager.incomePerSecond -= buildingDetails.incomeDuringConstruction;
+            _globalManager.currentData.revenuePerSecond -= buildingDetails.incomeDuringConstruction;
+            _globalManager.currentData.availableWorkers += buildingDetails.buildersNeeded;
             //gameManager.incomePerSecond += cBuilding.completeBuildingDetails.incomeOverTime;
             underConstruction = false;
             remainingTime = 0f;
@@ -73,7 +74,7 @@ public class BuildingUnderConstruction : MonoBehaviour
             StopCoroutine(SaveBipUpdatesRecurrent());
             gameObject.SetActive(false);
             UpdateBipDetails();
-            SaveData.SaveCurrentData(_globalManager.playersData);
+            _globalManager.SaveGame();
         }
         
         //Activate gameObject of each stage at the time goes by
@@ -119,24 +120,23 @@ public class BuildingUnderConstruction : MonoBehaviour
 
     public void SaveBip()
     {
-        _globalManager.playersData.buildingInProgressStatsList.Add(new BuildingInProgressStats(buildingDetails.buildingName, gameObject.activeInHierarchy, underConstruction, remainingTime, buildingDetails.incomeDuringConstruction, buildingDetails.upgradeIncomePrice, buildingDetails.upgradeLVL));
-        
+        _globalManager.currentData.buildingInProgressStatsList.Add(new BuildingInProgressStats(buildingDetails.buildingName, gameObject.activeInHierarchy, underConstruction, remainingTime, buildingDetails.incomeDuringConstruction, buildingDetails.upgradeIncomePrice, buildingDetails.upgradeLVL));
     }
 
     public void UpdateBipDetails()
     {
-        for (int i = 0; i < _globalManager.playersData.buildingInProgressStatsList.Count; i++)
+        for (int i = 0; i < _globalManager.currentData.buildingInProgressStatsList.Count; i++)
         {
-            if (_globalManager.playersData.buildingInProgressStatsList[i].bipName == buildingDetails.buildingName)
+            if (_globalManager.currentData.buildingInProgressStatsList[i].bipName == buildingDetails.buildingName)
             {
-                _globalManager.playersData.buildingInProgressStatsList[i].bipStatus = gameObject.activeInHierarchy;
-                _globalManager.playersData.buildingInProgressStatsList[i].bipInConstructionStatus = underConstruction;
-                _globalManager.playersData.buildingInProgressStatsList[i].bipRemainingTime = remainingTime;
-                _globalManager.playersData.buildingInProgressStatsList[i].bipIncomeDuringConstruction =
+                _globalManager.currentData.buildingInProgressStatsList[i].bipStatus = gameObject.activeInHierarchy;
+                _globalManager.currentData.buildingInProgressStatsList[i].bipInConstructionStatus = underConstruction;
+                _globalManager.currentData.buildingInProgressStatsList[i].bipRemainingTime = remainingTime;
+                _globalManager.currentData.buildingInProgressStatsList[i].bipIncomeDuringConstruction =
                     buildingDetails.incomeDuringConstruction;
-                _globalManager.playersData.buildingInProgressStatsList[i].bipUpgradeIncomePrice =
+                _globalManager.currentData.buildingInProgressStatsList[i].bipUpgradeIncomePrice =
                     buildingDetails.upgradeIncomePrice;
-                _globalManager.playersData.buildingInProgressStatsList[i].bipLvl = buildingDetails.upgradeLVL;
+                _globalManager.currentData.buildingInProgressStatsList[i].bipLvl = buildingDetails.upgradeLVL;
             }
         }
         
@@ -144,16 +144,16 @@ public class BuildingUnderConstruction : MonoBehaviour
 
     private void LoadBipData()
     {
-        for (int i = 0; i < _globalManager.playersData.buildingInProgressStatsList.Count; i++)
+        for (int i = 0; i < _globalManager.currentData.buildingInProgressStatsList.Count; i++)
         {
-            if (_globalManager.playersData.buildingInProgressStatsList[i].bipName == buildingDetails.buildingName)
+            if (_globalManager.currentData.buildingInProgressStatsList[i].bipName == buildingDetails.buildingName)
             {
-                gameObject.SetActive(_globalManager.playersData.buildingInProgressStatsList[i].bipStatus);
-                underConstruction = _globalManager.playersData.buildingInProgressStatsList[i].bipInConstructionStatus;
-                remainingTime = _globalManager.playersData.buildingInProgressStatsList[i].bipRemainingTime;
-                buildingDetails.incomeDuringConstruction = _globalManager.playersData.buildingInProgressStatsList[i].bipIncomeDuringConstruction;
-                buildingDetails.upgradeIncomePrice = _globalManager.playersData.buildingInProgressStatsList[i].bipUpgradeIncomePrice;
-                buildingDetails.upgradeLVL = _globalManager.playersData.buildingInProgressStatsList[i].bipLvl;
+                gameObject.SetActive(_globalManager.currentData.buildingInProgressStatsList[i].bipStatus);
+                underConstruction = _globalManager.currentData.buildingInProgressStatsList[i].bipInConstructionStatus;
+                remainingTime = _globalManager.currentData.buildingInProgressStatsList[i].bipRemainingTime;
+                buildingDetails.incomeDuringConstruction = _globalManager.currentData.buildingInProgressStatsList[i].bipIncomeDuringConstruction;
+                buildingDetails.upgradeIncomePrice = _globalManager.currentData.buildingInProgressStatsList[i].bipUpgradeIncomePrice;
+                buildingDetails.upgradeLVL = _globalManager.currentData.buildingInProgressStatsList[i].bipLvl;
             }
         }
     }
@@ -169,11 +169,11 @@ public class BuildingUnderConstruction : MonoBehaviour
 
     private void ActivateCb()
     {
-        for (int i = 0; i < _globalManager.playersData.completedBuildingsStatsList.Count; i++)
+        for (int i = 0; i < _globalManager.currentData.completedBuildingsStatsList.Count; i++)
         {
-            if (_globalManager.playersData.completedBuildingsStatsList[i].cbName == cBuilding.completeBuildingDetails.buildingName)
+            if (_globalManager.currentData.completedBuildingsStatsList[i].cbName == cBuilding.completeBuildingDetails.buildingName)
             {
-                if (_globalManager.playersData.completedBuildingsStatsList[i].cbSaved)
+                if (_globalManager.currentData.completedBuildingsStatsList[i].cbSaved)
                 {
                     completedBuilding.SetActive(true);
                 }
@@ -196,6 +196,7 @@ public struct BuildingDetails
     public float upgradePriceMultiplier;
     public float completionBonus;
     public int upgradeLVL;
+    public int buildersNeeded;
 }
 
 [Serializable]
