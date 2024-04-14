@@ -43,10 +43,9 @@ public class GlobalManager : MonoBehaviour
         playersData.revenuePerSecond = 0f;
         playersData.totalWorkers = 1;
         playersData.availableWorkers = 1;
-        //playersData.hireWorkerPrice = 100f;
         playersData.completedBuildingsStatsList.Clear();
         playersData.buildingInProgressStatsList.Clear();
-        SaveData.SaveCurrentData(playersData);
+        SaveGame();
     }
     
 }
