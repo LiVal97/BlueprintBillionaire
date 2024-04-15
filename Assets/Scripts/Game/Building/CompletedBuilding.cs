@@ -41,28 +41,28 @@ public class CompletedBuilding : MonoBehaviour
     private void ShowAppendices()
     {
         
-        if (completeBuildingDetails.upgradeLVL >= 25)
+        if (completeBuildingDetails.upgradeLVL >= 10)
         {
             for (int i = 0; i < appendicesLvl25.Length; i++)
             {
                 appendicesLvl25[i].SetActive(true);
             }
         }
-        if (completeBuildingDetails.upgradeLVL >= 50)
+        if (completeBuildingDetails.upgradeLVL >= 20)
         {
             for (int i = 0; i < appendicesLvl50.Length; i++)
             {
                 appendicesLvl50[i].SetActive(true);
             }
         }
-        if (completeBuildingDetails.upgradeLVL >= 75)
+        if (completeBuildingDetails.upgradeLVL >= 30)
         {
             for (int i = 0; i < appendicesLvl75.Length; i++)
             {
                 appendicesLvl75[i].SetActive(true);
             }
         }
-        if (completeBuildingDetails.upgradeLVL >= 100)
+        if (completeBuildingDetails.upgradeLVL >= 40)
         {
             for (int i = 0; i < appendicesLvl100.Length; i++)
             {

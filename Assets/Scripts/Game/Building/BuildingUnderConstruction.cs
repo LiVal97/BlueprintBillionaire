@@ -56,9 +56,7 @@ public class BuildingUnderConstruction : MonoBehaviour
         if (underConstruction)
         {
             remainingTime -= Time.deltaTime;
-            //gameManager.AddMoneyOverTime(buildingDetails.incomeDuringConstruction);
             EstimateRevenueToReceive();
-            Debug.Log(gameObject.name + "Start construction");
             builders.SetActive(true);
         }
 
@@ -67,7 +65,6 @@ public class BuildingUnderConstruction : MonoBehaviour
             gameManager.AddMoneyInstant(buildingDetails.completionBonus);
             _globalManager.currentData.revenuePerSecond -= buildingDetails.incomeDuringConstruction;
             _globalManager.currentData.availableWorkers += buildingDetails.buildersNeeded;
-            //gameManager.incomePerSecond += cBuilding.completeBuildingDetails.incomeOverTime;
             underConstruction = false;
             remainingTime = 0f;
             completedBuilding.SetActive(true);

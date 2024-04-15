@@ -56,7 +56,6 @@ public class TractorMovement : MonoBehaviour
         if (wayPointNo == wayPoints.Length)
         {
             wayPointNo = 0;
-            Debug.Log("Tractor move to first position");
         }
     }
     

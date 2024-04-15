@@ -43,14 +43,11 @@ public class BuilderBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("AudioSource is playing = " + _audioSource.isPlaying);
-        Debug.Log("Audio Pitch is" + _audioSource.pitch);
         distanceToWayP = Mathf.Abs(Vector3.Distance(wayPoints[wayPointNo].transform.position, transform.position));
         timer += Time.deltaTime;
 
         if (moveToNextWayP)
         {
-            Debug.Log("Move to next WayP");
             builderAgent.SetDestination(wayPoints[wayPointNo].transform.position);
             if (wayPoints[wayPointNo].isOcupied || !wayPoints[wayPointNo].gameObject.activeInHierarchy)
             {
@@ -61,24 +58,11 @@ public class BuilderBehaviour : MonoBehaviour
                 wayPointNo = 0;
             }
         }
-        
-        
-
-        /*if (MathF.Abs(wayPoints[wayPointNo].transform.position.z - transform.position.z) <= 0.01f && MathF.Abs(wayPoints[wayPointNo].transform.position.x - transform.position.x) <= 0.01f)
-        {
-            wayPointNo++;
-
-            if (wayPointNo > wayPoints.Length -1)
-            {
-                wayPointNo = 0;
-            }
-        }*/
 
         if (isIdle)
         {
             if (timer >= idleTime)
             {
-                Debug.Log("Stop Idle");
                 isIdle = false;
                 wayPoints[wayPointNo].isOcupied = false;
                 wayPointNo++;
@@ -99,7 +83,6 @@ public class BuilderBehaviour : MonoBehaviour
             
             if (timer >= buildingTime)
             {
-                Debug.Log("Stop Building");
                 isBuilding = false;
                 _audioSource.Stop();
                 anim.SetBool("isBuilding", isBuilding);
@@ -123,7 +106,6 @@ public class BuilderBehaviour : MonoBehaviour
             transform.rotation = Quaternion.Euler(eulerRotation);
             if (timer >= buildingTime)
             {
-                Debug.Log("Stop Building");
                 isHitGround = false;
                 _audioSource.Stop();
                 anim.SetBool("isHitingGround", isHitGround);

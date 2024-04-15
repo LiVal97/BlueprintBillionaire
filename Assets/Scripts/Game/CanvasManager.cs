@@ -56,6 +56,10 @@ public class CanvasManager : MonoBehaviour
     public Slider sfxSlider;
     private bool _settingsIsOpen;
     
+    [Header("   Time Scale")]
+    private int timeScale;
+
+    public TMP_Text timeScaleText;
 
     private GameManager gameManager;
     private AudioManager _audioManager;
@@ -63,8 +67,11 @@ public class CanvasManager : MonoBehaviour
 
     [SerializeField] private bool popUpActive;
 
+    
+
     private void Start()
     {
+        timeScale = 1;
         gameManager = FindObjectOfType<GameManager>();
         _audioManager = FindObjectOfType<AudioManager>();
         _globalManager = FindObjectOfType<GlobalManager>();
@@ -73,6 +80,7 @@ public class CanvasManager : MonoBehaviour
 
     private void Update()
     {
+        timeScaleText.text = "x" + timeScale;
         UpdateHireAmountToPay();
         BucUpdatedStats();
         BuildingClick();
@@ -274,9 +282,13 @@ public class CanvasManager : MonoBehaviour
 
     public void HireWorkers()
     {
-        _audioManager.ClickSound();
-        gameManager.HireWorker();
-        _globalManager.SaveGame();
+        if (gameManager.hirePrice <= _globalManager.currentData.money)
+        {
+            _audioManager.ClickSound();
+            gameManager.HireWorker();
+            _globalManager.SaveGame();
+        }
+        
     }
 
     private void UpdateHireAmountToPay()
@@ -335,6 +347,7 @@ public class CanvasManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
+        _globalManager.SaveGame();
         SceneManager.LoadScene("MainMenu");
     }
     
@@ -346,5 +359,27 @@ public class CanvasManager : MonoBehaviour
     public void ChangeSfxVolume()
     {
         AudioManager.instance.SfxVolume(sfxSlider.value);
+    }
+
+    public void IncreaseTimeScale()
+    {
+        timeScale++;
+        if (timeScale>= 4)
+        {
+            timeScale = 4;
+        }
+
+        Time.timeScale = timeScale;
+    }
+    
+    public void DecreaseTimeScale()
+    {
+        timeScale--;
+        if (timeScale<= 1)
+        {
+            timeScale = 1;
+        }
+
+        Time.timeScale = timeScale;
     }
 }
